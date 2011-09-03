@@ -1,0 +1,28 @@
+html {
+	background: #D1E3FF;
+}
+
+body {
+	font-family: sans-serif;
+	width: 70%;
+	margin: 1em auto;
+	padding: 1em;
+}
+
+h1 {
+	font: 3em courier;
+}
+
+#questions {
+	margin-bottom: 1em;
+}
+
+#questions a {
+	display: block;
+	width: 25%;
+	padding: 5px;
+}
+
+#questions a:hover {
+	background-color: hsl(217, 100%, 87%);
+}

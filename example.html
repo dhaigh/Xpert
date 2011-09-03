@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Example Xpert</title>
+	<link href="styles.css" rel="stylesheet">
+</head>
+<body>
+
+<h1>Think of a programming language.</h1>
+
+<div id="questions-container">
+
+	<h2></h2>
+	<div id="questions"></div>
+	<input type="button" value="Try again" id="restart" style="display:none">
+
+</div>
+
+<pre id="tree" style="display:none">
+Is it a low-level or high-level language?
+	Low-level
+		Does it consist soley of consecutive 1's and 0's?
+			Yes
+				Machine code
+			No
+				Assembly language
+	High-level
+		Does it have a highly parenthesised syntax?
+			Yes
+				Does it have lexical scope?
+					Yes
+						Scheme
+					No
+						Lisp
+			No
+				Is it part of the C family?
+					Yes
+						Is it object-oriented?
+							Yes
+								Is it developed by a corporation?
+									Yes, Apple
+										Objective-C
+									Yes, Microsoft
+										C#
+									No
+										C++
+							No
+								C
+					No
+						Is it primarily an interpreted language?
+							Yes
+								Was it initially designed to run in a web browser?
+									Yes
+										JavaScript
+									No
+										Is it generally run on a web server?
+											Yes
+												PHP
+											No
+												Does it have duck typing?
+													Yes
+														Does it use white-space as block delimiters?
+															Yes
+																Python
+															No
+																Ruby
+													No
+														Perl
+							No
+								Does it support the imperitive paradigm?
+									Yes
+										Is it a procedural language?
+											Yes
+												Is it object-oriented?
+													Yes
+														Fortran
+													No
+														Pascal
+											No
+												Does it run in a VM?
+													Yes
+														Java
+													No
+														Is it a functional language?
+															Yes
+																Caml
+															No
+																Ada
+									No
+										Is it a functional language?
+											Yes
+												Does it support concurrent programming?
+													Yes
+														Erlang
+													No
+														Is it object-oriented?
+															Yes
+																Scala
+															No
+																Haskell
+											No
+												Was it one of the first programming languages?
+													Yes
+														COBOL
+													No
+														To which paradigm does it belong?
+															Object-oriented
+																Does it use classes or prototypes?
+																	Classes
+																		Is it dynamically typed?
+																			Yes
+																				Smalltalk
+																			No
+																				Eiffel
+																	Prototypes
+																		Self
+															Procedural
+																BASIC
+</pre>
+
+<script src="jquery-1.6.2.min.js"></script>
+<script src="xpert.js"></script>
+<script src="scripts.js"></script>
+
+</body>
+</html>
