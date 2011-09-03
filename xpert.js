@@ -2,7 +2,7 @@ window.xpert = ( function () {
 
 	"use strict";
 
-	var xpert = function ( tree, callback ) {
+	var xpert = function ( tree ) {
 
 		// match any indent
 		var rIndent = /^\s*/g;
@@ -28,7 +28,6 @@ window.xpert = ( function () {
 
 				if ( $.type(curr) === "array" ) {
 					tree[ i ] = clean( curr );
-
 				} else {
 					tree[ i ] = curr.replace( rIndent, "" );
 				}
@@ -43,23 +42,21 @@ window.xpert = ( function () {
 		function makeTree ( tree ) {
 
 			var question       = tree[ 0 ],
-				subTree        = [],
-				newTree        = [ question, subTree ],
-				questionIndent = getIndentation( question );
+			    subTree        = [],
+			    newTree        = [ question, subTree ],
+			    questionIndent = getIndentation( question );
 
 			// the first item will always be the question
 			// so get the second onwards
 			$.each( tree.slice(1), function (i, curr) {
 
 				var indentation  = getIndentation(curr),
-					nextQuestion = subTree,
-					lastIndex    = nextQuestion.length - 1;
+				    nextQuestion = subTree,
+				    lastIndex    = nextQuestion.length - 1;
 
 				// the next line is further indented, more questions coming
 				if ( indentation === questionIndent + 1 ) {
-
 					nextQuestion.push( [curr] );
-
 				} else {
 					nextQuestion[ lastIndex ].push( curr );
 				}
@@ -69,7 +66,7 @@ window.xpert = ( function () {
 			$.each( subTree, function (i, curr) {
 
 				var question    = curr[ 0 ],
-					nextSubTree = curr.slice( 1 );
+				    nextSubTree = curr.slice( 1 );
 
 				// if more than one question-answer pair, more
 				// sub-questions have not been nested
@@ -93,8 +90,8 @@ window.xpert = ( function () {
 	xpert.getQuestionInfo = function ( tree ) {
 
 		var question  = tree[ 0 ],
-			subTree   = tree[ 1 ],
-			responses = [];
+		    subTree   = tree[ 1 ],
+		    responses = [];
 
 		// get each possible response for the question
 		$.each( subTree, function (i, curr) {
