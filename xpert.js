@@ -26,10 +26,10 @@ window.xpert = ( function () {
 
 			$.each( tree, function (i, curr) {
 
-				if ( $.type(curr) === "array" ) {
-					tree[ i ] = clean( curr );
-				} else {
+				if ( typeof curr === "string" ) {
 					tree[ i ] = curr.replace( rIndent, "" );
+				} else {
+					tree[ i ] = clean( curr );
 				}
 
 			});
