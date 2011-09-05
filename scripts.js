@@ -19,7 +19,7 @@
 
 				nextQuestion( next );
 
-				$( this ).animate( { "font-size": "1.5em" } )
+				$( this ).animate( {"font-size": "1.5em"}, 200 )
 						 .addClass( "active" )
 						 .siblings( "a" ).addClass( "inactive" )
 						 .add( this )
@@ -52,7 +52,7 @@
 			message = "It's " + language + "!",
 
 			$result = $( "<h2/>" ).addClass( "result" ).hide().html( message ),
-			$wiki = $( "<iframe/>", { "src":  URL }).hide();
+			$wiki = $( "<iframe/>", {"src":  URL} ).hide();
 
 		$( "#questions" ).append( $result )
 						 .append( $wiki );
