@@ -1,5 +1,5 @@
 html {
-	background: #D1E3FF;
+	background: #BBD8F2;
 }
 
 body {
@@ -46,17 +46,18 @@ a {
 }
 
 a.radio:hover {
-	background-color: #BCD6FF;
+	font-weight: bold;
 }
 
 a.active {
 	margin-left: 1em;
+	font-weight: bold;
 }
 
 a.inactive,
 a.inactive:hover {
 	background-color: none;
-	color: #AAA;
+	color: #5D697E;
 }
 
 #questions div {
