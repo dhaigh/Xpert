@@ -48,11 +48,11 @@
 
 		var language = result[ 0 ],
 			URL = result[ 1 ],
+
 			message = "It's " + language + "!",
+
 			$result = $( "<h2/>" ).addClass( "result" ).hide().html( message ),
-			$wiki = $( "<iframe/>", {
-				"src":  URL
-			}).hide();
+			$wiki = $( "<iframe/>", { "src":  URL }).hide();
 
 		$( "#questions" ).append( $result )
 						 .append( $wiki );
@@ -81,16 +81,8 @@
 
 	function nextQuestion ( next ) {
 
-		var nextHeading;
-
-		// more questions coming
-		if ( $.type(next) === "array" ) {
-			nextHeading = addQuestion( next );
-
-		// answer found
-		} else {
-			nextHeading = answerFound( next );
-		}
+		var nextHeading = typeof next === "string" ?
+				answerFound( next ) : addQuestion( next );
 
 		scrollTo( nextHeading );
 
