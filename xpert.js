@@ -42,17 +42,17 @@ window.xpert = ( function () {
 		function makeTree ( tree ) {
 
 			var question       = tree[ 0 ],
-			    subTree        = [],
-			    newTree        = [ question, subTree ],
-			    questionIndent = getIndentation( question );
+				subTree        = [],
+				newTree        = [ question, subTree ],
+				questionIndent = getIndentation( question );
 
 			// the first item will always be the question
 			// so get the second onwards
 			$.each( tree.slice(1), function (i, curr) {
 
 				var indentation  = getIndentation(curr),
-				    nextQuestion = subTree,
-				    lastIndex    = nextQuestion.length - 1;
+					nextQuestion = subTree,
+					lastIndex    = nextQuestion.length - 1;
 
 				// the next line is further indented, more questions coming
 				if ( indentation === questionIndent + 1 ) {
@@ -66,7 +66,7 @@ window.xpert = ( function () {
 			$.each( subTree, function (i, curr) {
 
 				var question    = curr[ 0 ],
-				    nextSubTree = curr.slice( 1 );
+					nextSubTree = curr.slice( 1 );
 
 				// if more than one question-answer pair, more
 				// sub-questions have not been nested
@@ -90,8 +90,8 @@ window.xpert = ( function () {
 	xpert.getQuestionInfo = function ( tree ) {
 
 		var question  = tree[ 0 ],
-		    subTree   = tree[ 1 ],
-		    responses = [];
+			subTree   = tree[ 1 ],
+			responses = [];
 
 		// get each possible response for the question
 		$.each( subTree, function (i, curr) {
