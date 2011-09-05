@@ -1,48 +1,124 @@
 ( function () {
 
-var tree = $( "#tree" ).html().trim().split( "\n" );
+	function addQuestion ( tree ) {
 
-function callback ( tree ) {
+		var questionInfo = xpert.getQuestionInfo( tree ),
 
-	var questionInfo = xpert.getQuestionInfo( tree ),
-	questionHTML = "";
+			$question  = $( "<h2/>" ).html( questionInfo.question ),
+			$container = $( "<div/>" ).hide().append( $question );
 
-	$( "#questions-container h2" ).html( questionInfo.question );
+		$.each( questionInfo.responses, function (i, answer) {
 
-	$.each( questionInfo.responses, function (i, curr) {
-		questionHTML += '<a href="#" data-rindex="' + i + '">' + curr + '</a>';
-	});
+			var next = questionInfo.subTree[ i ][ 1 ],
 
-	$( "#questions" ).html( questionHTML );
+			$answer = $( "<a/>", {
+				"href": "#",
+				"class": "radio",
+				"html": answer
+			}).bind( "click", function () {
 
-	$( "#questions a" ).click( function () {
+				nextQuestion( next );
 
-		var responseIndex = this.getAttribute( "data-rindex" ),
-			next          = questionInfo.subTree[ responseIndex ][ 1 ];
+				$( this ).animate( { "font-size": "1.5em" } )
+						 .addClass( "active" )
+						 .siblings( "a" ).addClass( "inactive" )
+						 .add( this )
+						   .removeClass( "radio" )
+						   .removeAttr( "href" )
+						   .unbind( "click" );
+
+				return false;
+
+			});
+
+			$container.append( $answer );
+
+		});
+
+		$( "#questions" ).append( $container );
+		$container.fadeIn();
+
+		return $question;
+
+	}
+
+	function answerFound ( result ) {
+
+		result = result.split( "|" );
+
+		var language = result[ 0 ],
+			URL = result[ 1 ],
+			message = "It's " + language + "!",
+			$result = $( "<h2/>" ).addClass( "result" ).hide().html( message ),
+			$wiki = $( "<iframe/>", {
+				"src":  URL
+			}).hide();
+
+		$( "#questions" ).append( $result )
+						 .append( $wiki );
+
+		$wiki.slideDown();
+
+		$result.fadeIn( function () {
+			$( "#restart" ).fadeIn();
+		});
+
+		return $result;
+
+	}
+
+	function scrollTo ( $el ) {
+
+		// do this animation then skip to
+		// the latest one
+		$( "body" ).stop().animate({
+
+			scrollTop: $el.offset().top
+
+		}, 1000 );
+
+	}
+
+	function nextQuestion ( next ) {
+
+		var nextHeading;
 
 		// more questions coming
 		if ( $.type(next) === "array" ) {
-			callback( next );
+			nextHeading = addQuestion( next );
 
 		// answer found
 		} else {
-			$( "#questions-container h2" ).html( "It's " + next + "!" );
-			$( "#questions" ).html( "" );
-			$( "#restart" ).show();
+			nextHeading = answerFound( next );
 		}
 
+		scrollTo( nextHeading );
+
+	}
+
+	// assume initial indent is 0, this
+	// strips out all whitespace before
+	// the first question
+	var tree = $( "#tree" ).html().trim().split( "\n" );
+	tree = xpert( tree );
+
+	// if executed with the context of
+	// a DOM element, restart and hide it
+	function init () {
+
+		// context is a DOM element
+		if ( this.nodeType ) {
+			$( "#questions" ).html( "" );
+			$( this ).hide();
+		}
+
+		nextQuestion( tree );
 		return false;
 
-	});
+	}
 
-}
+	init();
 
-tree = xpert( tree );
-callback( tree );
-
-$( "#restart" ).click( function () {
-	callback( tree );
-	$( this ).hide();
-});
+	$( "#restart" ).click( init );
 
 }() );

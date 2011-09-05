@@ -3,26 +3,62 @@ html {
 }
 
 body {
-	font-family: sans-serif;
-	width: 70%;
-	margin: 1em auto;
 	padding: 1em;
+	font-size: 2em;
+	font-family: monospace;
 }
 
 h1 {
-	font: 3em courier;
+	text-align: center;
+}
+
+h2 {
+	font-size: 1em;
+	margin-top: 0;
+	text-align: center;
+}
+
+iframe {
+	width: 100%;
+	height: 720px;
+	border: none;
+	background-color: #FFF;
+}
+
+h2.result {
+	font-style: italic;
+}
+
+#questions-container {
+	margin: 1em auto;
+	width: 80%;
 }
 
 #questions {
 	margin-bottom: 1em;
 }
 
-#questions a {
+a {
 	display: block;
-	width: 25%;
 	padding: 5px;
+	text-decoration: none;
+	color: #15C;
 }
 
-#questions a:hover {
-	background-color: hsl(217, 100%, 87%);
+a.radio:hover {
+	background-color: #BCD6FF;
+}
+
+a.active {
+	margin-left: 1em;
+}
+
+a.inactive,
+a.inactive:hover {
+	background-color: none;
+	color: #AAA;
+}
+
+#questions div {
+	margin-bottom: 1em;
 }
