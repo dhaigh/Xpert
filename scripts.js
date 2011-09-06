@@ -1,5 +1,7 @@
 ( function () {
 
+	"use strict";
+
 	function addQuestion ( tree ) {
 
 		// get info about the current tree
