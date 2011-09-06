@@ -47,7 +47,7 @@
 		result = result.split( "|" );
 
 		var language = result[ 0 ],
-			URL = result[ 1 ],
+			URL = "http://en.wikipedia.org/wiki/" + result[ 1 ],
 
 			message = "It's " + language + "!",
 
