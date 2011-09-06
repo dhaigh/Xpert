@@ -44,6 +44,7 @@
 
 	function answerFound ( result ) {
 
+		// first part is the answer, second the wiki page
 		result = result.split( "|" );
 
 		var language = result[ 0 ],
@@ -52,7 +53,9 @@
 			message = "It's " + language + "!",
 
 			$result = $( "<h2/>" ).addClass( "result" ).hide().html( message ),
-			$wiki = $( "<iframe/>", {"src":  URL} ).hide();
+
+			// set frameborder to 0 for IE
+			$wiki = $( "<iframe/>", {"src":  URL, "frameborder": 0} ).hide();
 
 		$( "#questions" ).append( $result )
 						 .append( $wiki );
@@ -91,7 +94,8 @@
 	// assume initial indent is 0, this
 	// strips out all whitespace before
 	// the first question
-	var tree = $( "#tree" ).html().trim().split( "\n" );
+	// TODO: trim() doesn't work on IE
+	var tree = $( "#tree" ).html().split( "\n" );
 	tree = xpert( tree );
 
 	// if executed with the context of
