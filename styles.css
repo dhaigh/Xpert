@@ -1,7 +1,6 @@
 body {
 	padding: 1em;
-	font-size: 2em;
-	font-family: monospace;
+	font: 2em monospace;
 	background: url(background.png) no-repeat left bottom #A4B7C9;
 	background-attachment: fixed;
 	height: 100%; /* expand body so the whole background is visible */
@@ -52,7 +51,8 @@ a, a:visited {
 	color: #15C;
 }
 
-a.radio:hover {
+a.radio:hover,
+#restart:hover {
 	text-decoration: underline;
 }
 
