@@ -65,13 +65,13 @@ window.xpert = ( function () {
 
 			$.each( subTree, function (i, curr) {
 
-				var question    = curr[ 0 ],
-					nextSubTree = curr.slice( 1 );
+				var question = curr[ 0 ],
+					next     = curr.slice( 1 );
 
 				// if more than one question-answer pair, more
 				// sub-questions have not been nested
 				if ( curr.length > 2 ) {
-					subTree[ i ] = [ question, makeTree(nextSubTree) ];
+					subTree[ i ] = [ question, makeTree(next) ];
 				}
 
 			});
@@ -82,27 +82,6 @@ window.xpert = ( function () {
 		}
 
 		return makeTree( tree );
-
-	};
-
-	// a simple utility to get some information about
-	// a particular tree
-	xpert.getQuestionInfo = function ( tree ) {
-
-		var question  = tree[ 0 ],
-			subTree   = tree[ 1 ],
-			responses = [];
-
-		// get each possible response for the question
-		$.each( subTree, function (i, curr) {
-			responses.push( curr[0] );
-		});
-
-		return {
-			question: question,
-			subTree: subTree,
-			responses: responses
-		};
 
 	};
 
@@ -129,7 +108,6 @@ window.xpert = ( function () {
 
 		// strip out blank lines
 		$.each( tree, function (i, curr) {
-			// curr is undefined for the last one
 			if ( !curr || !trim(curr) ) {
 				tree.splice( i, 1 );
 			}
