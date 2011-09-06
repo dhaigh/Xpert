@@ -43,7 +43,7 @@ h2.result {
 	margin-bottom: 1em;
 }
 
-a {
+a, a:visited {
 	display: block;
 	padding: 5px;
 	text-decoration: none;
