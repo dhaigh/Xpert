@@ -108,9 +108,18 @@ window.xpert = ( function () {
 
 	xpert.cleanTree = function ( tree ) {
 
-		// implement a trim function because IE doesn't have one
+		// implement a trim function because IE
+		// doesn't have "".trim()
 		function trim ( str ) {
-			return str.replace( /^\s+/g, "" ).replace( /\s+$/g, "" );
+
+			var nativeTrim = String.prototype.trim;
+
+			if ( nativeTrim ) {
+				return nativeTrim.call( str );
+			} else {
+				return str.replace( /^\s+/g, "" ).replace( /\s+$/g, "" );
+			}
+
 		}
 
 		// assume initial indent is 0, this
