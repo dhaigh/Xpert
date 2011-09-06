@@ -113,6 +113,44 @@
 	// question(s) or the answer
 	function nextQuestion ( next ) {
 
+		function activateAnswer ( el ) {
+			$( el ).animate( {"font-size": "1.5em"}, 200 )
+				   .addClass( "active" )
+
+				   // disable other answers
+				   .siblings( "a" ).addClass( "inactive" )
+				 
+				   // no longer radio (small and blue)
+				   .andSelf().removeClass( "radio" );
+		}
+
+		function deactivateOthers ( el ) {
+			$( el ).removeClass( "inactive" )
+
+				    // animate the active link back to normal
+				   .siblings( ".active" )
+						.animate( {"font-size": "1em"}, 200 )
+						.toggleClass( "active inactive" );
+		}
+
+		// do nothing for already selected answers
+		if ( $(this).hasClass("active") ) {
+
+			return;
+
+		} else if ( $(this).hasClass("inactive") ) {
+
+			// remove all descendant answers from view
+			$( this ).parent().siblings().slice(
+				$( this ).parent().index()
+			).remove();
+
+			deactivateOthers( this );
+
+			$RESTART.hide();
+
+		}
+
 		var nextHeading = typeof next === "string" ?
 				answerFound( next ) : addQuestion( next );
 
@@ -120,17 +158,7 @@
 
 		// "this" is the link of the answer chosen
 
-		$( this ).animate( {"font-size": "1.5em"}, 200 )
-				 .addClass( "active" )
-
-				 // disable other answers
-				 .siblings( "a" ).addClass( "inactive" )
-				 
-				  // disable all answers
-				 .add( this )
-				   .removeClass( "radio" )
-				   .removeAttr( "href" )
-				   .unbind( "click" );
+		activateAnswer( this );
 
 	}
 
