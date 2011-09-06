@@ -2,7 +2,9 @@ body {
 	padding: 1em;
 	font-size: 2em;
 	font-family: monospace;
-	background-color: #BBD8F2;
+	background: url(background.png) no-repeat left bottom #A4B7C9;
+	background-attachment: fixed;
+	height: 100%; /* expand body so the whole background is visible */
 }
 
 h1 {
@@ -36,7 +38,7 @@ h2.result {
 
 #container {
 	margin: 1em auto;
-	width: 80%;
+	width: 70%;
 }
 
 #questions {
@@ -51,18 +53,23 @@ a, a:visited {
 }
 
 a.radio:hover {
-	font-weight: bold;
+	text-decoration: underline;
 }
 
 a.active {
 	margin-left: 1em;
 	font-weight: bold;
+	cursor: text; 
 }
 
 a.inactive,
 a.inactive:hover {
 	background-color: none;
 	color: #5D697E;
+}
+
+a.inactive:hover {
+	text-decoration: underline;
 }
 
 #questions div {
