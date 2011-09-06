@@ -2,35 +2,53 @@
 
 	"use strict";
 
+	// main elements
+	// note all vars that are jQuery objects have $ prefix
+	var $QUESTIONS = $( "#questions" ),
+		$RESTART = $( "#restart" ),
+
+		// the raw tree
+		tree = $( "#tree" ).html();
+
+	// assume initial indent is 0, this
+	// strips out all whitespace before
+	// the first question
+	tree = xpert.cleanTree( tree );
+
+	// make nested
+	tree = xpert( tree );
+
 	function addQuestion ( tree ) {
 
 		// get info about the current tree
-		var questionInfo = xpert.getQuestionInfo( tree ),
+		var question = tree[ 0 ],
+			subTree = tree[ 1 ],
 
 			// the next question heading
-			$question  = $( "<h2/>" ).html( questionInfo.question ),
+			$question = $( "<h2/>" ).html( question ),
 
 			// container for the question (plus answers)
 			$container = $( "<div/>" ).hide().append( $question );
 
-		$.each( questionInfo.responses, function (i, answer) {
+		$.each( subTree, function (i, curr) {
 
-			// the tree of each question - can
+			// the subtree of the answer - can
 			// be another tree or an answer
-			var next = questionInfo.subTree[ i ][ 1 ],
+			var answer = curr[ 0 ],
+				next = curr[ 1 ],
 
-			$answer = $( "<a/>", {
-				"href": "#",
-				"class": "radio",
-				"html": answer
-			}).bind( "click", function () {
+				// the link of the answer
+				$answer = $( "<a/>", {
+					"href": "#",
+					"class": "radio",
+					"html": answer
+				}).bind( "click", function () {
+					// trigger the next question
+					nextQuestion.call( this, next );
 
-				nextQuestion.call( this, next );
-
-				// don't follow the #
-				return false;
-
-			});
+					// don't follow the #
+					return false;
+				});
 
 			// show the answer
 			$container.append( $answer );
@@ -38,7 +56,7 @@
 		});
 
 		// show the question its answers
-		$( "#questions" ).append( $container );
+		$QUESTIONS.append( $container );
 		$container.fadeIn();
 
 		// return the question element for scrolling
@@ -57,19 +75,20 @@
 
 			message = "It's " + language + "!",
 
+			// the language found heading
 			$result = $( "<h2/>" ).hide().addClass( "result" ).html( message ),
 
-			// set frameborder to 0 for IE
+			// wiki iframe - set frameborder to 0 for IE
 			$wiki = $( "<iframe/>", {src:  URL, frameborder: 0} ).hide();
 
 		// add the result and the wiki iframe
-		$( "#questions" ).append( $result )
-						 .append( $wiki );
+		$QUESTIONS.append( $result )
+				  .append( $wiki );
 
 		$wiki.slideDown();
 
 		$result.fadeIn( function () {
-			$( "#restart" ).fadeIn();
+			$RESTART.fadeIn();
 		});
 
 		return $result;
@@ -115,33 +134,30 @@
 
 	}
 
-	// assume initial indent is 0, this
-	// strips out all whitespace before
-	// the first question
-	var tree = $("#tree").html();
-
-	// clean blank lines
-	tree = xpert.cleanTree( tree );
-
-	// make nested
-	tree = xpert( tree );
-
 	// if executed with the context of
 	// a DOM element, restart and hide it
 	function init () {
 
 		// context is a DOM element
 		if ( this && this.nodeType ) {
-			$( "#questions" ).html( "" );
-			$( this ).hide();
-		}
 
-		addQuestion( tree );
-		return false;
+			$QUESTIONS.fadeOut( function () {
+				$( this ).html( "" ).show();
+				addQuestion( tree );
+			});
+
+			// hide the element that called the restart
+			$( this ).hide();
+
+			return false;
+
+		} else {
+			addQuestion( tree );
+		}
 
 	}
 
-	$( "#restart" ).click( init );
+	$RESTART.click( init );
 
 	init();
 
