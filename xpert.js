@@ -106,6 +106,30 @@ window.xpert = ( function () {
 
 	};
 
+	xpert.cleanTree = function ( tree ) {
+
+		// implement a trim function because IE doesn't have one
+		function trim ( str ) {
+			return str.replace( /^\s+/g, "" ).replace( /\s+$/g, "" );
+		}
+
+		// assume initial indent is 0, this
+		// strips out all whitespace before
+		// the first question
+		tree = trim( tree ).split( "\n" );
+
+		// strip out blank lines
+		$.each( tree, function (i, curr) {
+			// curr is undefined for the last one
+			if ( !curr || !trim(curr) ) {
+				tree.splice( i, 1 );
+			}
+		});
+
+		return tree;
+
+	};
+
 	return xpert;
 
 }() );
