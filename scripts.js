@@ -131,7 +131,7 @@
 	function init () {
 
 		// context is a DOM element
-		if ( this.nodeType ) {
+		if ( this && this.nodeType ) {
 			$( "#questions" ).html( "" );
 			$( this ).hide();
 		}
