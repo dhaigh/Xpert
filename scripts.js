@@ -78,8 +78,9 @@
 	// to the specified element
 	function scrollTo ( $el ) {
 		// do this animation then skip to
-		// the latest one
-		$( "body" ).stop().animate({
+		// the latest one. note: some browsers
+		// require scrolling body (Chrome), some html (FF, IE)
+		$( "html, body" ).stop().animate({
 
 			scrollTop: $el.offset().top
 
