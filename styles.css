@@ -1,19 +1,39 @@
 body {
-	padding: 1em;
-	font: 2em monospace;
-	background: url(background.png) no-repeat left bottom #A4B7C9;
-	background-attachment: fixed;
-	height: 100%; /* expand body so the whole background is visible */
+	font-size: 1.5em;
+	background-color: #eee;
 }
 
 h1 {
 	text-align: center;
+	color: #333;
+	padding: 0.5em 0;
+	margin-top: 0;
+	border-bottom: 2px dashed #555;
+	text-shadow: 2px 2px 0px #ddd, 4px 4px 0px #aaa;
+	font-size: 96px;
+	font-family: monospace;
 }
 
 h2 {
 	font-size: 1em;
-	margin-top: 0;
-	text-align: center;
+}
+
+h2.result {
+	font-style: italic;
+	border-top: 2px dotted #000;
+	padding-top: 1em;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:focus {
+	outline: none;
+}
+
+a:hover {
+	text-decoration: underline;
 }
 
 p {
@@ -21,54 +41,47 @@ p {
 }
 
 .warning {
-	color: #F11;
+	color: #f11;
 }
 
 iframe {
 	width: 100%;
 	height: 720px;
 	border: none;
-	background-color: #FFF;
-}
-
-h2.result {
-	font-style: italic;
+	background-color: #fff;
 }
 
 #container {
-	margin: 1em auto;
+	margin: 0 auto 1em;
+	padding: 1em;
 	width: 70%;
+	background-color: #fff;
+	border: 1px solid #000;
 }
 
-#questions {
-	margin-bottom: 1em;
-}
-
-a, a:visited {
+#questions a, a:visited {
 	display: block;
 	padding: 5px;
-	text-decoration: none;
-	color: #15C;
+	color: #15c;
 }
 
-a.radio:hover,
-#restart:hover {
-	text-decoration: underline;
-}
-
-a.active {
+#questions  a.active {
 	margin-left: 1em;
 	font-weight: bold;
-	cursor: text; 
+	cursor: text;
 }
 
-a.inactive,
-a.inactive:hover {
+#questions  a.active:hover {
+	text-decoration: none;
+}
+
+#questions a.inactive,
+#questions a.inactive:hover {
 	background-color: none;
-	color: #5D697E;
+	color: #5d697e;
 }
 
-a.inactive:hover {
+#questions a.inactive:hover {
 	text-decoration: underline;
 }
 
