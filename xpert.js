@@ -20,8 +20,7 @@ window.xpert = ( function () {
 
 		}
 
-		// clean whitespace from the start of an array
-		// with sub-arrays
+		// clean whitespace from the start of a tree
 		function clean ( tree ) {
 
 			tree = xpert.eachResponse( tree, function (answer) {
@@ -36,21 +35,21 @@ window.xpert = ( function () {
 		// the actual process probably needs more explaining
 		function makeTree ( tree ) {
 
-			var question       = tree[ 0 ],
-				subTree        = [],
-				newTree        = [ question, subTree ],
-				questionIndent = getIndentation( question );
+			var question = tree[ 0 ],
+				subTree = [],
+				newTree = [ question, subTree ],
+				nestLevel = getIndentation( question );
 
 			// the first item will always be the question
 			// so get the second onwards
 			$.each( tree.slice(1), function (i, curr) {
 
-				var indentation  = getIndentation(curr),
+				var indentation = getIndentation(curr),
 					nextQuestion = subTree,
-					lastIndex    = nextQuestion.length - 1;
+					lastIndex = nextQuestion.length - 1;
 
 				// the next line is further indented, more questions coming
-				if ( indentation === questionIndent + 1 ) {
+				if ( indentation === nestLevel + 1 ) {
 					nextQuestion.push( [curr] );
 				} else {
 					nextQuestion[ lastIndex ].push( curr );
@@ -153,7 +152,7 @@ window.xpert = ( function () {
 				});
 			});
 
-		// was the final answer - result found!
+		// was the final answer - result found
 		} else {
 			results.push( tree );
 		}

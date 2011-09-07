@@ -119,8 +119,6 @@
 		var answerLinks = {
 				activate: function ( el, callback ) {
 
-					callback = callback || function () {};
-
 					$( el ).animate( {"font-size": "1.5em"}, 200, callback )
 						   .addClass( "active" )
 
@@ -215,7 +213,7 @@
 	});
 
 	results.sort();
-	results = results.join("\n");
+	results = results.join( "\n" );
 
 	$( "#a-language" ).click( function () {
 		alert( results );
