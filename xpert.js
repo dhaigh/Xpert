@@ -24,14 +24,8 @@ window.xpert = ( function () {
 		// with sub-arrays
 		function clean ( tree ) {
 
-			$.each( tree, function (i, curr) {
-
-				if ( typeof curr === "string" ) {
-					tree[ i ] = curr.replace( rIndent, "" );
-				} else {
-					tree[ i ] = clean( curr );
-				}
-
+			tree = xpert.eachResponse( tree, function (answer) {
+				return answer.replace( rIndent, "" );
 			});
 
 			return tree;
@@ -39,6 +33,7 @@ window.xpert = ( function () {
 		}
 
 		// where the real parsing happens
+		// the actual process probably needs more explaining
 		function makeTree ( tree ) {
 
 			var question       = tree[ 0 ],
@@ -66,7 +61,7 @@ window.xpert = ( function () {
 			$.each( subTree, function (i, curr) {
 
 				var question = curr[ 0 ],
-					next     = curr.slice( 1 );
+					next = curr.slice( 1 );
 
 				// if more than one question-answer pair, more
 				// sub-questions have not been nested
@@ -114,6 +109,56 @@ window.xpert = ( function () {
 		});
 
 		return tree;
+
+	};
+
+	// applies a function to each response (question/possible answers/eventual result)
+	// used internally for cleaning the indentation white-space
+	// named function expression for recursion ftw!
+	xpert.eachResponse = function eachResponse ( tree, func ) {
+
+		$.each( tree, function (i, curr) {
+
+			// sets of question/answer/result are stored
+			// in arrays - apply the function to the
+			// actual string of each
+			if ( typeof curr === "string" ) {
+				// function called with the response as
+				// the argument and returns changes to it
+				tree[ i ] = func( curr );
+			} else {
+				tree[ i ] = eachResponse( curr, func );
+			}
+
+		});
+
+		return tree;
+
+	};
+
+	// returns array of each possible result in a tree
+	// should probably add getQuestions and getAnswers
+	xpert.getResults = function getResults ( tree ) {
+
+		var results = [],
+			subTree = tree[ 1 ];
+
+		// if there are more questions
+		if ( $.isArray(subTree) ) {
+
+			$.each( subTree, function( i, answer ){
+				// add each result
+				$.each( getResults(answer[1]), function (j, result) {
+					results.push( result );
+				});
+			});
+
+		// was the final answer - result found!
+		} else {
+			results.push( tree );
+		}
+
+		return results;
 
 	};
 
