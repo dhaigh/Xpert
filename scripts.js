@@ -8,7 +8,13 @@
 		$RESTART = $( "#restart" ),
 
 		// the raw tree
-		tree = $( "#tree" ).html();
+		tree = $( "#tree" ).html(),
+
+		// array to hold each possible result
+		results = [],
+
+		// whether or not an answer is being animated
+		isAnimating = false;
 
 	// assume initial indent is 0, this
 	// strips out all whitespace before
@@ -17,6 +23,17 @@
 
 	// make nested
 	tree = xpert( tree );
+
+	// animate the window's scroll position
+	// to the specified element
+	function scrollTo ( $el ) {
+		// do this animation then skip to
+		// the latest one. note: some browsers
+		// require scrolling body (Chrome), some html (FF, IE)
+		$( "html, body" ).clearQueue().animate({
+			scrollTop: $el.offset().top
+		}, 1000 );
+	}
 
 	function addQuestion ( tree ) {
 
@@ -27,7 +44,7 @@
 			// the next question heading
 			$question = $( "<h2/>" ).html( question ),
 
-			// container for the question (plus answers)
+			// container for the question (and answers)
 			$container = $( "<div/>" ).hide().append( $question );
 
 		$.each( subTree, function (i, curr) {
@@ -44,23 +61,22 @@
 					"html": answer
 				}).bind( "click", function () {
 					// trigger the next question
-					nextQuestion.call( this, next );
+					if ( !isAnimating ) {
+						nextQuestion.call( this, next );
+					}
 
 					// don't follow the #
 					return false;
 				});
 
-			// show the answer
 			$container.append( $answer );
 
 		});
 
 		// show the question its answers
 		$QUESTIONS.append( $container );
-		$container.fadeIn();
 
-		// return the question element for scrolling
-		return $question;
+		scrollTo( $container.fadeIn() );
 
 	}
 
@@ -75,37 +91,24 @@
 
 			message = "It's " + language + "!",
 
+			$container = $( "<div/>" ).hide(),
+
 			// the language found heading
-			$result = $( "<h2/>" ).hide().addClass( "result" ).html( message ),
+			$result = $( "<h2/>" ).addClass( "result" ).html( message ),
 
 			// wiki iframe - set frameborder to 0 for IE
-			$wiki = $( "<iframe/>", {src:  URL, frameborder: 0} ).hide();
+			$wiki = $( "<iframe/>", {src:  URL, frameborder: 0} );
 
 		// add the result and the wiki iframe
-		$QUESTIONS.append( $result )
+		$container.append( $result )
 				  .append( $wiki );
 
-		$wiki.slideDown();
+		$QUESTIONS.append( $container );
 
-		$result.fadeIn( function () {
+		scrollTo( $container.fadeIn( function () {
 			$RESTART.fadeIn();
-		});
+		}));
 
-		return $result;
-
-	}
-
-	// animate the window's scroll position
-	// to the specified element
-	function scrollTo ( $el ) {
-		// do this animation then skip to
-		// the latest one. note: some browsers
-		// require scrolling body (Chrome), some html (FF, IE)
-		$( "html, body" ).stop().animate({
-
-			scrollTop: $el.offset().top
-
-		}, 1000 );
 	}
 
 	// insert the appropriate heading and scroll to it
@@ -113,53 +116,72 @@
 	// question(s) or the answer
 	function nextQuestion ( next ) {
 
-		function activateAnswer ( el ) {
-			$( el ).animate( {"font-size": "1.5em"}, 200 )
-				   .addClass( "active" )
+		var answerLinks = {
+				activate: function ( el, callback ) {
 
-				   // disable other answers
-				   .siblings( "a" ).addClass( "inactive" )
-				 
-				   // no longer radio (small and blue)
-				   .andSelf().removeClass( "radio" );
-		}
+					callback = callback || function () {};
 
-		function deactivateOthers ( el ) {
-			$( el ).removeClass( "inactive" )
+					$( el ).animate( {"font-size": "1.5em"}, 200, callback )
+						   .addClass( "active" )
 
-				    // animate the active link back to normal
-				   .siblings( ".active" )
-						.animate( {"font-size": "1em"}, 200 )
-						.toggleClass( "active inactive" );
+						   // disable other answers
+						   .siblings( "a" ).addClass( "inactive" )
+
+						   // no longer radio
+						   .andSelf().removeClass( "radio" );
+				},
+
+				deactivateOthers: function  ( el ) {
+					$( el ).removeClass( "inactive" )
+
+							// animate the active link back to normal
+						   .siblings( ".active" )
+								.animate( {"font-size": "1em"}, 200 )
+								.toggleClass( "active inactive" );
+				}
+			},
+
+			nextIsAnswer = typeof next === "string";
+
+		function removeSiblingsAfter( $el ) {
+			// get the index of the element and
+			// .slice on the set of siblings
+			$el.siblings().slice(
+				$el.index()
+			).remove();
 		}
 
 		// do nothing for already selected answers
 		if ( $(this).hasClass("active") ) {
-
 			return;
-
 		} else if ( $(this).hasClass("inactive") ) {
 
 			// remove all descendant answers from view
-			$( this ).parent().siblings().slice(
-				$( this ).parent().index()
-			).remove();
+			removeSiblingsAfter( $(this).parent() );
 
-			deactivateOthers( this );
+			// make the currently active link no longer active
+			answerLinks.deactivateOthers( this );
 
+			// hide the restart button if an answer
+			// was changed after a result was found
 			$RESTART.hide();
 
 		}
 
-		var nextHeading = typeof next === "string" ?
-				answerFound( next ) : addQuestion( next );
+		// flag to disable clicking the other
+		// answer while this one is animating
+		isAnimating = true;
+		answerLinks.activate( this, function () {
 
-		scrollTo( nextHeading );
+			isAnimating = false;
 
-		// "this" is the link of the answer chosen
+			if ( nextIsAnswer ) {
+				answerFound( next );
+			} else {
+				addQuestion( next );
+			}
 
-		activateAnswer( this );
-
+		});
 	}
 
 	// if executed with the context of
@@ -186,6 +208,19 @@
 	}
 
 	$RESTART.click( init );
+
+	$.each( xpert.getResults(tree), function (i, result) {
+		// trim off the wiki part
+		results.push( result.split("|")[0] );
+	});
+
+	results.sort();
+	results = results.join("\n");
+
+	$( "#a-language" ).click( function () {
+		alert( results );
+		return false;
+	});
 
 	init();
 
