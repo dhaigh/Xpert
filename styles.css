@@ -66,13 +66,13 @@ iframe {
 	color: #15c;
 }
 
-#questions  a.active {
+#questions a.active {
 	margin-left: 1em;
 	font-weight: bold;
 	cursor: text;
 }
 
-#questions  a.active:hover {
+#questions a.active:hover {
 	text-decoration: none;
 }
 
