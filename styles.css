@@ -9,7 +9,7 @@ h1 {
 	padding: 0.5em 0;
 	margin-top: 0;
 	border-bottom: 2px dashed #555;
-	text-shadow: 2px 2px 0px #ddd, 4px 4px 0px #aaa;
+	text-shadow: 2px 2px 0 #ddd, 4px 4px 0 #aaa;
 	font-size: 72px;
 	font-family: monospace;
 }
@@ -59,7 +59,8 @@ iframe {
 	border: 1px solid #000;
 }
 
-#questions a, a:visited {
+#questions a,
+#questions a:visited {
 	display: block;
 	padding: 5px;
 	color: #15c;
