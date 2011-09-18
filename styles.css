@@ -26,6 +26,7 @@ h2.result {
 
 a {
 	text-decoration: none;
+	color: #15c;
 }
 
 a:focus {
@@ -62,8 +63,7 @@ iframe {
 #questions a,
 #questions a:visited {
 	display: block;
-	padding: 5px;
-	color: #15c;
+	padding: 5px 0;
 }
 
 #questions a.active {
