@@ -10,19 +10,14 @@
 		// the raw tree
 		tree = $( "#tree" ).html(),
 
-		// array to hold each possible result
+		// the actual expert system object
+		expert = new Xpert( tree, displayQuestion, displayResult ),
+
+		// each possible result
 		results = [],
 
 		// whether or not an answer is being animated
 		isAnimating = false;
-
-	// assume initial indent is 0, this
-	// strips out all whitespace before
-	// the first question
-	tree = xpert.cleanTree( tree );
-
-	// make nested
-	tree = xpert( tree );
 
 	// animate the window's scroll position
 	// to the specified element
@@ -35,22 +30,68 @@
 		}, 1000 );
 	}
 
-	function addQuestion ( tree ) {
+	// remove the siblings after a given element
+	function removeSiblingsAfter( $el ) {
+		// get the index of the element and
+		// .slice on the set of siblings
+		$el.siblings().slice(
+			$el.index()
+		).remove();
+	}
 
-		// get info about the current tree
-		var question = tree[ 0 ],
-			subTree = tree[ 1 ],
+	function nextQuestion ( next ) {
 
-			// the next question heading
-			$question = $( "<h2/>" ).html( question ),
+		// do nothing for already selected answers
+		if ( this.hasClass("active") ) {
+			return;
+
+		} else if ( this.hasClass("inactive") ) {
+
+			this.siblings( ".active" ).animate( {"font-size": "1em"}, 200 )
+									  .toggleClass( "active inactive" );
+
+			// remove all descendant answers from view
+			removeSiblingsAfter( this.parent() );
+
+			// hide the restart button if an answer
+			// was changed after a result was found
+			$RESTART.hide();
+
+		// neither answer has been chosen yet - 'radio'
+		} else {
+
+			// other answers are inactive
+			this.siblings().addClass( "inactive" )
+						   // answers can no longer be radio
+						   .andSelf().removeClass( "radio" );
+
+		}
+
+		// flag to disable clicking the other
+		// answer while this one is animating
+		isAnimating = true;
+
+		this.animate( {"font-size": "1.5em"}, 200, function () {
+			isAnimating = false;
+
+			// display the next question or result
+			expert.next( next );
+		}).removeClass( "inactive" ).addClass( "active" );
+
+	}
+
+	function displayQuestion ( question, answers ) {
+
+		// the next question heading
+		var $question = $( "<h2/>" ).html( question ),
 
 			// container for the question (and answers)
 			$container = $( "<div/>" ).hide().append( $question );
 
-		$.each( subTree, function (i, curr) {
+		$.each( answers, function (i, curr) {
 
-			// the subtree of the answer - can
-			// be another tree or an answer
+			// the subTree of the answer - can
+			// be another expert or an answer
 			var answer = curr[ 0 ],
 				next = curr[ 1 ],
 
@@ -60,13 +101,16 @@
 					"class": "radio",
 					"html": answer
 				}).bind( "click", function () {
-					// trigger the next question
+
+					// trigger the next question only if another
+					// answer isn't being animated
 					if ( !isAnimating ) {
-						nextQuestion.call( this, next );
+						nextQuestion.call( $(this), next );
 					}
 
 					// don't follow the #
 					return false;
+
 				});
 
 			$container.append( $answer );
@@ -80,7 +124,7 @@
 
 	}
 
-	function answerFound ( result ) {
+	function displayResult ( result ) {
 
 		// first part is the answer, second the wiki page
 		result = result.split( "|" );
@@ -97,7 +141,7 @@
 			$result = $( "<h2/>" ).addClass( "result" ).html( message ),
 
 			// wiki iframe - set frameborder to 0 for IE
-			$wiki = $( "<iframe/>", {src:  URL, frameborder: 0} );
+			$wiki = $( "<iframe/>", {"src":  URL, "frameborder": 0} );
 
 		// add the result and the wiki iframe
 		$container.append( $result )
@@ -105,109 +149,28 @@
 
 		$QUESTIONS.append( $container );
 
-		scrollTo( $container.fadeIn( function () {
-			$RESTART.fadeIn();
-		}));
+		scrollTo( $container.fadeIn() );
+
+		$RESTART.fadeIn();
 
 	}
 
-	// insert the appropriate heading and scroll to it
-	// next can be an array of the next
-	// question(s) or the answer
-	function nextQuestion ( next ) {
+	$RESTART.click( function () {
 
-		var answerLinks = {
-				activate: function ( el, callback ) {
+		$QUESTIONS.fadeOut( function () {
+			$( this ).html( "" ).show();
 
-					$( el ).animate( {"font-size": "1.5em"}, 200, callback )
-						   .addClass( "active" )
-
-						   // disable other answers
-						   .siblings( "a" ).addClass( "inactive" )
-
-						   // no longer radio
-						   .andSelf().removeClass( "radio" );
-				},
-
-				deactivateOthers: function  ( el ) {
-					$( el ).removeClass( "inactive" )
-
-							// animate the active link back to normal
-						   .siblings( ".active" )
-								.animate( {"font-size": "1em"}, 200 )
-								.toggleClass( "active inactive" );
-				}
-			},
-
-			nextIsAnswer = typeof next === "string";
-
-		function removeSiblingsAfter( $el ) {
-			// get the index of the element and
-			// .slice on the set of siblings
-			$el.siblings().slice(
-				$el.index()
-			).remove();
-		}
-
-		// do nothing for already selected answers
-		if ( $(this).hasClass("active") ) {
-			return;
-		} else if ( $(this).hasClass("inactive") ) {
-
-			// remove all descendant answers from view
-			removeSiblingsAfter( $(this).parent() );
-
-			// make the currently active link no longer active
-			answerLinks.deactivateOthers( this );
-
-			// hide the restart button if an answer
-			// was changed after a result was found
-			$RESTART.hide();
-
-		}
-
-		// flag to disable clicking the other
-		// answer while this one is animating
-		isAnimating = true;
-		answerLinks.activate( this, function () {
-
-			isAnimating = false;
-
-			if ( nextIsAnswer ) {
-				answerFound( next );
-			} else {
-				addQuestion( next );
-			}
-
+			// run the initial tree
+			expert.next( Xpert.makeTree(tree) );
 		});
-	}
 
-	// if executed with the context of
-	// a DOM element, restart and hide it
-	function init () {
+		$( this ).hide();
 
-		// context is a DOM element
-		if ( this && this.nodeType ) {
+		return false;
 
-			$QUESTIONS.fadeOut( function () {
-				$( this ).html( "" ).show();
-				addQuestion( tree );
-			});
+	});
 
-			// hide the element that called the restart
-			$( this ).hide();
-
-			return false;
-
-		} else {
-			addQuestion( tree );
-		}
-
-	}
-
-	$RESTART.click( init );
-
-	$.each( xpert.getResults(tree), function (i, result) {
+	$.each( Xpert.getResults(expert.tree), function (i, result) {
 		// trim off the wiki part
 		results.push( result.split("|")[0] );
 	});
@@ -219,7 +182,5 @@
 		alert( results );
 		return false;
 	});
-
-	init();
 
 }() );
