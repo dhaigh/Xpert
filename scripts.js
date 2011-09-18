@@ -3,7 +3,6 @@
 	"use strict";
 
 	// main elements
-	// note all vars that are jQuery objects have $ prefix
 	var $QUESTIONS = $( "#questions" ),
 		$RESTART = $( "#restart" ),
 
@@ -45,6 +44,7 @@
 		if ( this.hasClass("active") ) {
 			return;
 
+		// another answer was previously chosen
 		} else if ( this.hasClass("inactive") ) {
 
 			this.siblings( ".active" ).animate( {"font-size": "1em"}, 200 )
@@ -57,7 +57,7 @@
 			// was changed after a result was found
 			$RESTART.hide();
 
-		// neither answer has been chosen yet - 'radio'
+		// no answers have been chosen yet - 'radio'
 		} else {
 
 			// other answers are inactive
