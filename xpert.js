@@ -1,34 +1,35 @@
-window.Xpert = ( function () {
+var Xpert = ( function (undef) {
 
 	"use strict";
 
-	// match any indent
-	var rIndent = /^\s*/;
+	// some ES5 methods to work with
+	String.prototype.trim = String.prototype.trim || function () {
+		return this.replace( /^\s+/g, "" ).replace( /\s+$/g, "" );
+	};
 
-	// implement a trim function because IE
-	// doesn't have "".trim()
-	function trim ( str ) {
+	Array.prototype.forEach = Array.prototype.forEach || function ( callback, context ) {
 
-		var nativeTrim = String.prototype.trim;
-
-		if ( nativeTrim ) {
-			return nativeTrim.call( str );
-		} else {
-			return str.replace( /^\s+/g, "" ).replace( /\s+$/g, "" );
-		}
-
-	}
-
-	// simple iterator for arrays
-	function forEach( arr, callback ) {
-
-		var i = 0, len = arr.length;
-
+		var i = 0, len = this.length;
 		for ( ; i < len; i += 1 ) {
-			callback( i, arr[i] );
+			if ( this[i] !== undef ) {
+				// context is optional - func.call(null/undef) is the same as func()
+				callback.call( context, this[i], i, this );
+			}
 		}
 
-	}
+	};
+
+	Array.prototype.map = Array.prototype.map || function ( callback, context ) {
+
+		var result = [];
+
+		this.forEach( function (curr, i, self) {
+			result[ i ] = callback.call( context, curr, i, self );
+		});
+
+		return result;
+
+	};
 
 	// get the indentation level
 	function getIndentation ( str ) {
@@ -38,64 +39,54 @@ window.Xpert = ( function () {
 			return str.length - str.replace( regex, "" ).length;
 		}
 
+		// match any indent
+		var rIndent = /^\s*/;
+
 		return count( rIndent, str );
 
 	}
 
-	// clean the indentation off a tree
-	function clean ( tree ) {
-
-		tree = Xpert.eachResponse( tree, function (answer) {
-			return trim( answer );
-		});
-
-		return tree;
-
-	}
-
+	// where the real parsing happens
+	// the actual process probably needs more explaining
 	function makeTree ( tree ) {
 
 		var question = tree[ 0 ],
-			subTree = [],
-			newTree = [ question, subTree ],
-			nestLevel = getIndentation( question );
+			answers = [],
+			questionLevel = getIndentation( question );
 
 		// the first item will always be the question
 		// so get the second onwards
-		// TODO: custom iterator
-		forEach( tree.slice(1), function (i, curr) {
+		tree.slice( 1 ).forEach( function (curr) {
 
-			var indentation = getIndentation(curr),
-				nextQuestion = subTree,
-				lastIndex = nextQuestion.length - 1;
+			var answerLevel = getIndentation( curr ),
+				last = answers.length - 1;
 
 			// the next line is further indented, more questions coming
-			if ( indentation === nestLevel + 1 ) {
-				nextQuestion.push( [curr] );
+			if ( answerLevel === questionLevel + 1 ) {
+				answers.push( [curr] );
 			} else {
-				nextQuestion[ lastIndex ].push( curr );
+				answers[ last ].push( curr );
 			}
 
 		});
 
-		forEach( subTree, function (i, curr) {
-
-			var question = curr[ 0 ],
-				next = curr.slice( 1 );
+		answers = answers.map( function (curr) {
 
 			// if more than one question-answer pair, more
-			// sub-questions have not been nested
+			// sub-questions have not been nested - recursion!
 			if ( curr.length > 2 ) {
-				subTree[ i ] = [ question, makeTree(next) ];
+				return [ curr[0], makeTree(curr.slice(1)) ];
+			} else {
+				return curr;
 			}
 
 		});
 
-		// clean tabs from the start of each question
-		return clean( newTree );
+		return [ question, answers ];
 
 	}
 
+	// the constructor - takes a raw tree and the two callbacks
 	var Xpert = function ( tree, displayQuestion, displayResult ) {
 
 		this.displayQuestion = displayQuestion;
@@ -118,23 +109,29 @@ window.Xpert = ( function () {
 
 	};
 
-	// where the real parsing happens
-	// the actual process probably needs more explaining
 	Xpert.makeTree = function ( tree ) {
 
 		// assume initial indent is 0, this
 		// strips out all whitespace before
 		// the first question
-		tree = trim( tree ).split( "\n" );
-		return makeTree( tree );
+		tree = tree.trim().split( "\n" );
+
+		// parse the tree
+		tree = makeTree( tree );
+
+		// clean tabs from the start of each question
+		return Xpert.mapResponses( tree, function (response) {
+			return response.trim();
+		});
+
 	};
 
 	// applies a function to each response (question/possible answers/eventual result)
 	// used internally for cleaning the indentation white-space
 	// named function expression for recursion ftw!
-	Xpert.eachResponse = function eachResponse ( tree, func ) {
+	Xpert.mapResponses = function mapResponses ( tree, func ) {
 
-		forEach( tree, function (i, curr) {
+		return tree.map( function (curr) {
 
 			// sets of question/answer/result are stored
 			// in arrays - apply the function to the
@@ -142,14 +139,12 @@ window.Xpert = ( function () {
 			if ( typeof curr === "string" ) {
 				// function called with the response as
 				// the argument and returns changes to it
-				tree[ i ] = func( curr );
+				return func( curr );
 			} else {
-				tree[ i ] = eachResponse( curr, func );
+				return mapResponses( curr, func );
 			}
 
 		});
-
-		return tree;
 
 	};
 
@@ -167,11 +162,16 @@ window.Xpert = ( function () {
 		// more questions
 		} else {
 
-			forEach( subTree, function( i, answer ){
+			subTree.forEach( function(curr) {
+
+				var next = curr[ 1 ];
+				next = getResults( next );
+
 				// add each result
-				forEach( getResults(answer[1]), function (j, result) {
+				next.forEach( function (result) {
 					results.push( result );
 				});
+
 			});
 
 		}
