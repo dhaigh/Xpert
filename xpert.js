@@ -19,23 +19,14 @@ window.Xpert = ( function () {
 
 	}
 
-	// strips out the beginning and trailing
-	// whitespace and blank lines of a raw tree
-	function initialClean ( tree ) {
+	// simple iterator for arrays
+	function forEach( arr, callback ) {
 
-		// assume initial indent is 0, this
-		// strips out all whitespace before
-		// the first question
-		tree = trim( tree ).split( "\n" );
+		var i = 0, len = arr.length;
 
-		// strip out blank lines
-		$.each( tree, function (i, curr) {
-			if ( !curr || !trim(curr) ) {
-				tree.splice( i, 1 );
-			}
-		});
-
-		return tree;
+		for ( ; i < len; i += 1 ) {
+			callback( i, arr[i] );
+		}
 
 	}
 
@@ -72,7 +63,7 @@ window.Xpert = ( function () {
 		// the first item will always be the question
 		// so get the second onwards
 		// TODO: custom iterator
-		$.each( tree.slice(1), function (i, curr) {
+		forEach( tree.slice(1), function (i, curr) {
 
 			var indentation = getIndentation(curr),
 				nextQuestion = subTree,
@@ -87,7 +78,7 @@ window.Xpert = ( function () {
 
 		});
 
-		$.each( subTree, function (i, curr) {
+		forEach( subTree, function (i, curr) {
 
 			var question = curr[ 0 ],
 				next = curr.slice( 1 );
@@ -130,7 +121,11 @@ window.Xpert = ( function () {
 	// where the real parsing happens
 	// the actual process probably needs more explaining
 	Xpert.makeTree = function ( tree ) {
-		tree = initialClean( tree );
+
+		// assume initial indent is 0, this
+		// strips out all whitespace before
+		// the first question
+		tree = trim( tree ).split( "\n" );
 		return makeTree( tree );
 	};
 
@@ -139,7 +134,7 @@ window.Xpert = ( function () {
 	// named function expression for recursion ftw!
 	Xpert.eachResponse = function eachResponse ( tree, func ) {
 
-		$.each( tree, function (i, curr) {
+		forEach( tree, function (i, curr) {
 
 			// sets of question/answer/result are stored
 			// in arrays - apply the function to the
@@ -172,9 +167,9 @@ window.Xpert = ( function () {
 		// more questions
 		} else {
 
-			$.each( subTree, function( i, answer ){
+			forEach( subTree, function( i, answer ){
 				// add each result
-				$.each( getResults(answer[1]), function (j, result) {
+				forEach( getResults(answer[1]), function (j, result) {
 					results.push( result );
 				});
 			});
