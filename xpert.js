@@ -99,6 +99,7 @@ var Xpert = ( function (undef) {
 
 	Xpert.prototype.next = function ( next ) {
 
+		// use for storing the current state of the tree
 		this.tree = next;
 
 		if ( typeof next === "string" ) {
@@ -107,6 +108,35 @@ var Xpert = ( function (undef) {
 			this.displayQuestion( next[0], next[1] );
 		}
 
+	};
+
+	// returns array of each possible result in a tree
+	// (should probably add getQuestions and getAnswers)
+	function getResults ( tree ) {
+
+		var results = [],
+			subTree = tree[ 1 ];
+
+		// was the final answer - result found
+		if ( typeof subTree === "string" ) {
+			results.push( tree );
+
+		// more questions
+		} else {
+
+			// add the results
+			subTree.forEach( function (curr) {
+				results = results.concat( getResults(curr[1]) );
+			});
+
+		}
+
+		return results;
+
+	}
+
+	Xpert.prototype.getResults = function () {
+		return getResults( this.tree );
 	};
 
 	Xpert.makeTree = function ( tree ) {
@@ -145,38 +175,6 @@ var Xpert = ( function (undef) {
 			}
 
 		});
-
-	};
-
-	// returns array of each possible result in a tree
-	// (should probably add getQuestions and getAnswers)
-	Xpert.getResults = function getResults ( tree ) {
-
-		var results = [],
-			subTree = tree[ 1 ];
-
-		// was the final answer - result found
-		if ( typeof subTree === "string" ) {
-			results.push( tree );
-
-		// more questions
-		} else {
-
-			subTree.forEach( function(curr) {
-
-				var next = curr[ 1 ];
-				next = getResults( next );
-
-				// add each result
-				next.forEach( function (result) {
-					results.push( result );
-				});
-
-			});
-
-		}
-
-		return results;
 
 	};
 

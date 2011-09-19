@@ -19,7 +19,7 @@
 		isAnimating = false;
 
 	// animate the window's scroll position
-	// to the specified element
+	// to the specified element over 1 second
 	function scrollTo ( $el ) {
 		// do this animation then skip to
 		// the latest one. note: some browsers
@@ -88,10 +88,8 @@
 			// container for the question (and answers)
 			$container = $( "<div/>" ).hide().append( $question );
 
-		$.each( answers, function (i, curr) {
+		answers.forEach( function (curr) {
 
-			// the subTree of the answer - can
-			// be another expert or an answer
 			var answer = curr[ 0 ],
 				next = curr[ 1 ],
 
@@ -170,7 +168,7 @@
 
 	});
 
-	$.each( Xpert.getResults(expert.tree), function (i, result) {
+	expert.getResults().forEach( function (result) {
 		// trim off the wiki part
 		results.push( result.split("|")[0] );
 	});
