@@ -159,7 +159,7 @@
 			$( this ).html( "" ).show();
 
 			// run the initial tree
-			expert.next( Xpert.makeTree(tree) );
+			expert.next( Xpert.parseTree(tree) );
 		});
 
 		$( this ).hide();
