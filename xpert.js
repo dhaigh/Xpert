@@ -10,7 +10,7 @@ var Xpert = ( function (undef) {
 	Array.prototype.forEach = Array.prototype.forEach || function ( callback, context ) {
 
 		var i = 0, len = this.length;
-		for ( ; i < len; i += 1 ) {
+		for ( ; i < len; i++ ) {
 			if ( this[i] !== undef ) {
 				// context is optional - func.call(null/undef) is the same as func()
 				callback.call( context, this[i], i, this );
@@ -31,19 +31,14 @@ var Xpert = ( function (undef) {
 
 	};
 
+	// length of a string with regex removed
+	function count ( regex, str ) {
+		return str.length - str.replace( regex, "" ).length;
+	}
+
 	// get the indentation level
 	function getIndentation ( str ) {
-
-		// length of a string with regex removed
-		function count ( regex, str ) {
-			return str.length - str.replace( regex, "" ).length;
-		}
-
-		// match any indent
-		var rIndent = /^\s*/;
-
-		return count( rIndent, str );
-
+		return count( /^\s*/, str );
 	}
 
 	// where the real parsing happens
