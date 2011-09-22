@@ -28,7 +28,7 @@ A tree may look like this:
 
 Important: only use a single whitespace character (space or tab) per level of indentation (the above was indented with tabs, then GitHub happened..)
 
-The idea is that you stick a tree in a hidden `<pre>` tag and load it into your script.
+The idea is that you put your trees in a hidden `<pre>` and load the contents of it it into your script. Alternatively, you could Ajax them in if you felt like it.
 
 This tree parses to give:
 
@@ -38,11 +38,11 @@ This tree parses to give:
 	["Answer 3", "Moar result!"]
 ]]</pre>
 
-Trees are of the form:
+In general, trees are of the form:
 
 `[question_text, [answer1, answer2, ... answerN]]`
 
-Answers are of the form:
+and answers are of the form:
 
 `[answer_text, result_text_or_another_question]`
 
