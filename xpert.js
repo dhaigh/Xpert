@@ -43,7 +43,7 @@ var Xpert = ( function (undef) {
 
 	// where the real parsing happens
 	// the actual process probably needs more explaining
-	function makeTree ( tree ) {
+	function parseTree ( tree ) {
 
 		var question = tree[ 0 ],
 			answers = [],
@@ -70,7 +70,7 @@ var Xpert = ( function (undef) {
 			// if more than one question-answer pair, more
 			// sub-questions have not been nested - recursion!
 			if ( curr.length > 2 ) {
-				return [ curr[0], makeTree(curr.slice(1)) ];
+				return [ curr[0], parseTree(curr.slice(1)) ];
 			} else {
 				return curr;
 			}
@@ -88,7 +88,7 @@ var Xpert = ( function (undef) {
 		this.displayResult = displayResult;
 
 		// display the first question
-		this.next( Xpert.makeTree(tree) );
+		this.next( Xpert.parseTree(tree) );
 
 	};
 
@@ -134,7 +134,7 @@ var Xpert = ( function (undef) {
 		return getResults( this.tree );
 	};
 
-	Xpert.makeTree = function ( tree ) {
+	Xpert.parseTree = function ( tree ) {
 
 		// assume initial indent is 0, this
 		// strips out all whitespace before
@@ -142,7 +142,7 @@ var Xpert = ( function (undef) {
 		tree = tree.trim().split( "\n" );
 
 		// parse the tree
-		tree = makeTree( tree );
+		tree = parseTree( tree );
 
 		// clean tabs from the start of each question
 		return Xpert.mapResponses( tree, function (response) {

@@ -3,13 +3,13 @@
 function emptyFunc () { return function () {}; }
 
 var tree1 = document.getElementById( "test1" ).innerHTML,
-	tree1parsed = Xpert.makeTree( tree1 ),
+	tree1parsed = Xpert.parseTree( tree1 ),
 	q1 = emptyFunc(),
 	r1 = emptyFunc(),
 	expert1 = new Xpert( tree1, q1, r1 ),
 
 	tree2 = document.getElementById( "test2" ).innerHTML,
-	tree2parsed = Xpert.makeTree( tree2 ),
+	tree2parsed = Xpert.parseTree( tree2 ),
 	q2 = function ( q, a ) { expert2question = [q, a]; },
 	r2 = function ( r ) { expert2result = r; },
 	expert2 = new Xpert( tree2, q2, r2 ),
@@ -17,11 +17,11 @@ var tree1 = document.getElementById( "test1" ).innerHTML,
 	expert2result,
 
 	tree3 = document.getElementById( "test3" ).innerHTML,
-	tree3parsed = Xpert.makeTree( tree3 ),
+	tree3parsed = Xpert.parseTree( tree3 ),
 	expert3 = new Xpert( tree3, emptyFunc(), emptyFunc() ),
 
 	tree4 = document.getElementById( "test4" ).innerHTML,
-	tree4parsed = Xpert.makeTree( tree4 ),
+	tree4parsed = Xpert.parseTree( tree4 ),
 	expert4 = new Xpert( tree4, emptyFunc(), emptyFunc() );
 
 test( "initialization", function () {
@@ -32,7 +32,7 @@ test( "initialization", function () {
 	equal( expert1.displayResult, r1, "result callback registered" );
 });
 
-test( "Xpert.makeTree() - parsing", function () {
+test( "Xpert.parseTree() - parsing", function () {
 	expect( 4 );
 
 	var expected1 = [
@@ -91,6 +91,14 @@ test( "Xpert.mapResponses()", function () {
 	expect( 1 );
 
 	deepEqual( Xpert.mapResponses(expert1.tree, function (response) {
+		return response + "x";
+	}), ["testing 123x",[["yesx","foox"],["nox","barx"]]]);
+});
+
+test( "mapResponses()", function () {
+	expect( 1 );
+
+	deepEqual( expert1.mapResponses( function (response) {
 		return response + "x";
 	}), ["testing 123x",[["yesx","foox"],["nox","barx"]]]);
 });
