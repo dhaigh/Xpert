@@ -178,10 +178,6 @@ var Xpert = ( function (undef) {
 
 	};
 
-	Xpert.prototype.mapResponses = function ( func ) {
-		return Xpert.mapResponses( this.tree, func );
-	};
-
 	return Xpert;
 
 }() );
