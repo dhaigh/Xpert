@@ -46,7 +46,7 @@ and answers are of the form:
 
 `[answer_text, result_text_or_another_question]`
 
-Here's another example of how trees are parsed if you're not quite sure:
+Here's another example of how trees are parsed if you're still not quite sure:
 
 <pre>Question
 	Answer
@@ -70,11 +70,11 @@ Parsed:
 	["Answer 2.0", "party"]
 ]]</pre>
 
-So if the first tree was passed to the constructor, the first call to the question callback would be:
+So if the first tree was passed to the constructor, the first call to the question callback would be something like:
 
 `questionCallback( "Question", [["Answer 1", "Result"],["Answer 2", "Another result"],["Answer 3", "Moar result!"]] )`
 
-The idea is that you take the question argument, display it, then take the answer tree, display each possible answer and keep track of the result of each answer.
+Then in your callback function, you take the question argument, display it, then take the answer tree, display each possible answer and keep track of the result of each answer.
 
 Either way, what you want to do is when an answer is selected, call the `.next()` method of your Xpert object, with the parameter being the result of that answer. Xpert will determine if more questions need to be asked or not, and runs the appropriate callback.
 
