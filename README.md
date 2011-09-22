@@ -16,17 +16,7 @@ Trees
 
 A tree is an instance of a question and it's associated answers.
 
-Trees are of the form:
-
-`[question_text, [answer1, answer2, ... answerN]]`
-
-Answers are of the form:
-
-`[answer_text, result_text_or_another_question]`
-
-A tree is a string that has the following raw syntax:
-
-For example:
+A tree may look like this:
 
 <pre>Question
 	Answer 1
@@ -36,6 +26,10 @@ For example:
 	Answer 3
 		Moar result!</pre>
 
+Important: only use a single whitespace character (space or tab) per level of indentation (the above was indented with tabs, then GitHub happened..)
+
+The idea is that you stick a tree in a hidden `<pre>` tag and load it into your script.
+
 This tree parses to give:
 
 <pre>["Question", [
@@ -43,6 +37,14 @@ This tree parses to give:
 	["Answer 2", "Another result"],
 	["Answer 3", "Moar result!"]
 ]]</pre>
+
+Trees are of the form:
+
+`[question_text, [answer1, answer2, ... answerN]]`
+
+Answers are of the form:
+
+`[answer_text, result_text_or_another_question]`
 
 So if this was the tree that was passed to the constructor, the first call to the question callback would be:
 
