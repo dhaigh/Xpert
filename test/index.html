@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>QUnit Tests</title>
+	<link rel="stylesheet" href="qunit/qunit.css" media="screen">
+	<script src="qunit/qunit.js"></script>
+	<script src="../xpert.js"></script>
+</head>
+<body>
+
+<h1 id="qunit-header">QUnit Test Suite</h1>
+<h2 id="qunit-banner"></h2>
+<div id="qunit-testrunner-toolbar"></div>
+<h2 id="qunit-userAgent"></h2>
+<ol id="qunit-tests"></ol>
+
+<div id="qunit-fixture">
+
+<pre id="test1">
+testing 123
+	yes
+		foo
+	no
+		bar
+</pre>
+
+<pre id="test2">
+testing 123
+	yes
+		foo
+	no
+		moar test?
+			ja
+				boo
+			nay
+				hoo
+</pre>
+
+<pre id="test3">
+testing 123
+	yes
+		can has foo?
+			yes
+				sure?
+					yes
+						fine, foo!
+	no
+		moar test?
+			ja
+				boo
+			nay
+				hoo
+			mm
+				goo
+</pre>
+
+<pre id="test4">
+
+whitespace test!!1
+ pick me!
+  ^_^
+
+
+
+</pre>
+
+</div>
+
+<script src="tests.js"></script>
+
+</body>
+</html>
