@@ -18,7 +18,7 @@ h2 {
 	font-size: 1em;
 }
 
-h2.result {
+.result {
 	font-style: italic;
 	border-top: 2px dotted #000;
 	padding-top: 1em;
