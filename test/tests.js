@@ -25,9 +25,12 @@ var tree1 = document.getElementById( "test1" ).innerHTML,
 	expert4 = new Xpert( tree4, emptyFunc(), emptyFunc() );
 
 test( "initialization", function () {
-	expect( 3 );
+	expect( 4 );
+
+	var expert1a = new Xpert( tree1parsed, emptyFunc(), emptyFunc() );
 
 	deepEqual( expert1.tree, tree1parsed, "tree parsed and exposed" );
+	deepEqual( expert1a.tree, tree1parsed, "tree that is already parsed is exposed" );
 	equal( expert1.displayQuestion, q1, "question callback registered" );
 	equal( expert1.displayResult, r1, "result callback registered" );
 });

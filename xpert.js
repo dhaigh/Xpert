@@ -41,54 +41,19 @@ var Xpert = ( function (undef) {
 		return count( /^\s*/, str );
 	}
 
-	// where the real parsing happens
-	// the actual process probably needs more explaining
-	function parseTree ( tree ) {
-
-		var question = tree[ 0 ],
-			answers = [],
-			questionLevel = getIndentation( question );
-
-		// the first item will always be the question
-		// so get the second onwards
-		tree.slice( 1 ).forEach( function (curr) {
-
-			var answerLevel = getIndentation( curr ),
-				last = answers.length - 1;
-
-			// the next line is further indented, more questions coming
-			if ( answerLevel === questionLevel + 1 ) {
-				answers.push( [curr] );
-			} else {
-				answers[ last ].push( curr );
-			}
-
-		});
-
-		answers = answers.map( function (curr) {
-
-			// if more than one question-answer pair, more
-			// sub-questions have not been nested - recursion!
-			if ( curr.length > 2 ) {
-				return [ curr[0], parseTree(curr.slice(1)) ];
-			} else {
-				return curr;
-			}
-
-		});
-
-		return [ question, answers ];
-
-	}
-
 	// the constructor - takes a raw tree and the two callbacks
 	var Xpert = function ( tree, displayQuestion, displayResult ) {
 
 		this.displayQuestion = displayQuestion;
 		this.displayResult = displayResult;
 
+		// parse the tree if it isn't already
+		if ( typeof tree === "string" ) {
+			tree = Xpert.parseTree( tree );
+		}
+
 		// display the first question
-		this.next( Xpert.parseTree(tree) );
+		this.next( tree );
 
 	};
 
@@ -134,6 +99,46 @@ var Xpert = ( function (undef) {
 		return getResults( this.tree );
 	};
 
+	// where the real parsing happens
+	// the actual process probably needs more explaining
+	function parseTree ( tree ) {
+
+		var question = tree[ 0 ],
+			answers = [],
+			questionLevel = getIndentation( question );
+
+		// the first item will always be the question
+		// so get the second onwards
+		tree.slice( 1 ).forEach( function (curr) {
+
+			var answerLevel = getIndentation( curr ),
+				last = answers.length - 1;
+
+			// the next line is further indented, more questions coming
+			if ( answerLevel === questionLevel + 1 ) {
+				answers.push( [curr] );
+			} else {
+				answers[ last ].push( curr );
+			}
+
+		});
+
+		answers = answers.map( function (curr) {
+
+			// if more than one question-answer pair, more
+			// sub-questions have not been nested - recursion!
+			if ( curr.length > 2 ) {
+				return [ curr[0], parseTree(curr.slice(1)) ];
+			} else {
+				return curr;
+			}
+
+		});
+
+		return [ question, answers ];
+
+	}
+
 	Xpert.parseTree = function ( tree ) {
 
 		// assume initial indent is 0, this
@@ -171,6 +176,10 @@ var Xpert = ( function (undef) {
 
 		});
 
+	};
+
+	Xpert.prototype.mapResponses = function ( func ) {
+		return Xpert.mapResponses( this.tree, func );
 	};
 
 	return Xpert;
