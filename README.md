@@ -32,11 +32,13 @@ The idea is that you put your trees in a hidden `<pre>` and load the contents of
 
 This tree parses to give:
 
-<pre>["Question", [
-	["Answer 1", "Result"],
-	["Answer 2", "Another result"],
-	["Answer 3", "Moar result!"]
-]]</pre>
+<pre>[
+	"Question", [
+		["Answer 1", "Result"],
+		["Answer 2", "Another result"],
+		["Answer 3", "Moar result!"]
+	]
+]</pre>
 
 In general, trees are of the form:
 
@@ -60,15 +62,17 @@ Here's another example of how trees are parsed if you're still not quite sure:
 
 Parsed:
 
-<pre>["Question", [
-	["Answer", [
-		"Foo?", [
-			["Yes", "Foo!"],
-			["No thanks", "Bar it is"]
-		]
-	]],
-	["Answer 2.0", "party"]
-]]</pre>
+<pre>[
+	"Question", [
+		["Answer", [
+			"Foo?", [
+				["Yes", "Foo!"],
+				["No thanks", "Bar it is"]
+			]
+		]],
+		["Answer 2.0", "party"]
+	]
+]</pre>
 
 So if the first tree was passed to the constructor, the first call to the question callback would be something like:
 
