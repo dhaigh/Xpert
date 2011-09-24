@@ -87,6 +87,8 @@ Methods
 
 `.next(tree)` - takes an Xpert object to a new state with a new tree and runs the appropriate callback
 
+`.getQuestions()` - returns an array of all the questions in the tree
+
 `.getResults()` - returns an array of all the results in the tree
 
 Helper functions
@@ -94,4 +96,8 @@ Helper functions
 
 `Xpert.parseTree(tree)` - takes a raw tree as the only parameter and returns the tree parsed
 
-`Xpert.mapResponses(tree, func)` - takes a parsed tree and maps to each response and returns the new tree
+`Xpert.mapTree(tree, func)` - takes a parsed tree and maps to each response and returns the new tree
+
+`Xpert.getQuestions(tree)` - takes a parsed tree and returns an array of all the questions in the tree
+
+`Xpert.getResults(tree)` - takes a parsed tree and returns an array of all the results in the tree
