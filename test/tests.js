@@ -112,11 +112,13 @@ test( ".next()", function () {
 
 	expert2.next( tree2parsed[1][1][1] );
 	deepEqual( expert2question, ["moar test?",[["ja","boo"],["nay","hoo"]]], "question callback called with correct parameters" );
+
 });
 
 test( ".getResults()", function () {
 	expect( 1 );
 
+	expert1.next( tree1parsed );
 	deepEqual( expert1.getResults(), ["foo","bar"] );
 });
 
