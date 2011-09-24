@@ -1,8 +1,8 @@
-var Xpert = ( function (undef) {
+// some ES5 methods to work with
+( function (undef) {
 
 	"use strict";
 
-	// some ES5 methods to work with
 	String.prototype.trim = String.prototype.trim || function () {
 		return this.replace( /^\s+/g, "" ).replace( /\s+$/g, "" );
 	};
@@ -22,7 +22,6 @@ var Xpert = ( function (undef) {
 	Array.prototype.map = Array.prototype.map || function ( callback, context ) {
 
 		var result = [];
-
 		this.forEach( function (curr, i, self) {
 			result[ i ] = callback.call( context, curr, i, self );
 		});
@@ -30,6 +29,12 @@ var Xpert = ( function (undef) {
 		return result;
 
 	};
+
+}() );
+
+var Xpert = ( function () {
+
+	"use strict";
 
 	// length of a string with regex removed
 	function count ( regex, str ) {
@@ -68,35 +73,6 @@ var Xpert = ( function (undef) {
 			this.displayQuestion( next[0], next[1] );
 		}
 
-	};
-
-	// returns array of each possible result in a tree
-	// (should probably add getQuestions and getAnswers)
-	function getResults ( tree ) {
-
-		var results = [],
-			subTree = tree[ 1 ];
-
-		// was the final answer - result found
-		if ( typeof subTree === "string" ) {
-			results.push( tree );
-
-		// more questions
-		} else {
-
-			// add the results
-			subTree.forEach( function (curr) {
-				results = results.concat( getResults(curr[1]) );
-			});
-
-		}
-
-		return results;
-
-	}
-
-	Xpert.prototype.getResults = function () {
-		return getResults( this.tree );
 	};
 
 	// where the real parsing happens
@@ -150,16 +126,64 @@ var Xpert = ( function (undef) {
 		tree = parseTree( tree );
 
 		// clean tabs from the start of each question
-		return Xpert.mapResponses( tree, function (response) {
+		return Xpert.mapTree( tree, function (response) {
 			return response.trim();
 		});
 
 	};
 
+	// returns array of each possible question in a tree
+	Xpert.getQuestions = function getQuestions ( tree ) {
+
+		// tree always starts with a question
+		var questions = [ tree[0] ];
+
+		tree[ 1 ].forEach( function (curr) {
+			var currNext = curr[ 1 ];
+
+			// more questions - result not found
+			if ( typeof currNext !== "string" ) {
+				questions = questions.concat( getQuestions(currNext) );
+			}
+		});
+
+		return questions;
+
+	};
+
+	Xpert.prototype.getQuestions = function () {
+		return Xpert.getQuestions( this.tree );
+	};
+
+	// returns array of each possible result in a tree
+	Xpert.getResults = function getResults ( tree ) {
+
+		var results = [];
+
+		// was the final answer - result found
+		if ( typeof tree === "string" ) {
+			return [ tree ];
+
+		// more questions
+		} else {
+			tree[ 1 ].forEach( function (curr) {
+				var currNext = curr[ 1 ];
+				results = results.concat( getResults(currNext) );
+			});
+		}
+
+		return results;
+
+	};
+
+	Xpert.prototype.getResults = function () {
+		return Xpert.getResults( this.tree );
+	};
+
 	// applies a function to each response (question/possible answers/eventual result)
 	// used internally for cleaning the indentation white-space
 	// named function expression for recursion ftw!
-	Xpert.mapResponses = function mapResponses ( tree, func ) {
+	Xpert.mapTree = function mapTree ( tree, func ) {
 
 		return tree.map( function (curr) {
 
@@ -171,7 +195,7 @@ var Xpert = ( function (undef) {
 				// the argument and returns changes to it
 				return func( curr );
 			} else {
-				return mapResponses( curr, func );
+				return mapTree( curr, func );
 			}
 
 		});
