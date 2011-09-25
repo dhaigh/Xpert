@@ -26,7 +26,7 @@ A tree may look like this:
 	Answer 3
 		Moar result!</pre>
 
-Important: only use a single whitespace character (space or tab) per level of indentation (the above was indented with tabs, then GitHub happened..)
+Important: use the same amount of spacing for the indentation of anything on the same 'level'. It would be a good idea to simply pick one and use it for everything, e.g. one tab.
 
 The idea is that you put your trees in a hidden `<pre>` and load the contents of it it into your script. Alternatively, you could Ajax them in if you felt like it.
 

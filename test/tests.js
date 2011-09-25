@@ -59,6 +59,16 @@ test( "Xpert#next", function () {
 
 });
 
+test( "Xpert#mapTree", function () {
+	expect( 2 );
+
+	deepEqual( expert1.mapTree( function (response) {
+		return response + "x";
+	}), ["testing 123x",[["yesx","foox"],["nox","barx"]]]);
+
+	deepEqual( expert1.tree, ["testing 123",[["yes","foo"],["no","bar"]]], "tree not modified" );
+});
+
 test( "Xpert#getQuestions", function () {
 	expect( 5 );
 
@@ -90,23 +100,30 @@ test( "Xpert.parseTree", function () {
 
 	deepEqual( tree1parsed, expected1, "simple tree" );
 	deepEqual( tree2parsed, expected2, "one level of nesting" );
-	deepEqual( tree3parsed, expected3, "different numbers of responses including one" );
+	deepEqual( tree3parsed, expected3, "varying indents" );
 	deepEqual( tree4parsed, expected4, "spaces instead of tabs" );
 	deepEqual( tree5parsed, expected5, "14 levels of nesting" );
 });
 
 test( "Xpert.mapTree", function () {
-	expect( 1 );
+	expect( 3 );
 
 	deepEqual( Xpert.mapTree(expert1.tree, function (response) {
 		return response + "x";
 	}), ["testing 123x",[["yesx","foox"],["nox","barx"]]]);
+
+	deepEqual( Xpert.mapTree(tree1, function (response) {
+		return response + "x";
+	}), ["testing 123x",[["yesx","foox"],["nox","barx"]]], "works for non-parsed trees" );
+
+	deepEqual( expert1.tree, ["testing 123",[["yes","foo"],["no","bar"]]], "tree not modified" );
 });
 
 test( "Xpert.getQuestions", function () {
-	expect( 5 );
+	expect( 6 );
 
 	deepEqual( Xpert.getQuestions(expert1.tree), ["testing 123"] );
+	deepEqual( Xpert.getQuestions(tree1), ["testing 123"], "works for non-parsed trees" );
 	deepEqual( Xpert.getQuestions(expert2.tree), ["testing 123","moar test?"] );
 	deepEqual( Xpert.getQuestions(expert3.tree), ["testing 123","can has foo?","sure?","moar test?"] );
 	deepEqual( Xpert.getQuestions(expert4.tree), ["whitespace test!!1"] );
@@ -114,9 +131,10 @@ test( "Xpert.getQuestions", function () {
 });
 
 test( "Xpert.getResults", function () {
-	expect( 5 );
+	expect( 6 );
 
 	deepEqual( Xpert.getResults(expert1.tree), ["foo","bar"] );
+	deepEqual( Xpert.getResults(tree1), ["foo","bar"], "works for non-parsed trees" );
 	deepEqual( Xpert.getResults(expert2.tree), ["foo","boo","hoo"] );
 	deepEqual( Xpert.getResults(expert3.tree), ["fine, foo!","boo","hoo","goo"] );
 	deepEqual( Xpert.getResults(expert4.tree), ["^_^"] );
