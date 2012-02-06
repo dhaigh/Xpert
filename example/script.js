@@ -168,7 +168,7 @@
 
 	});
 
-	expert.getResults().forEach( function (result) {
+	expert.get('results').forEach( function (result) {
 		// trim off the wiki part
 		results.push( result.split("|")[0] );
 	});
@@ -180,5 +180,7 @@
 		alert( results );
 		return false;
 	});
+
+	//console.log(expert.get('questions'));
 
 }() );
