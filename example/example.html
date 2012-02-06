@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="UTF-8">
+	<meta charset="utf-8">
 	<title>Example Xpert</title>
 	<link rel="stylesheet" href="styles.css">
 </head>
@@ -10,7 +10,7 @@
 <h1>Programming language <em>expert</em></h1>
 
 <div id="container">
-	<p>Think of <a href="#" id="a-language">a programming language</a>. I'll ask you some questions, and tell you what language you're thinking of. <span class="warning">Warning: <code>code</code> jargon ahead!</span></p>
+	<p>Think of <a href="#" id="a-language">a programming language</a>.
 	<div id="questions"></div>
 	<a href="#" id="restart" style="display:none">Have another go!</a>
 </div>
@@ -118,8 +118,9 @@ Is it a low-level or high-level language?
 </pre>
 
 <script src="jquery-1.6.4.min.js"></script>
+<script src="../underscore-min.js"></script>
 <script src="../xpert.js"></script>
-<script src="scripts.js"></script>
+<script src="script.js"></script>
 
 </body>
 </html>

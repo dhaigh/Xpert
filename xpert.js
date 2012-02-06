@@ -1,244 +1,210 @@
-// some ES5 methods to work with
-( function (undef) {
+var Xpert = (function () {
 
-	"use strict";
+    "use strict";
 
-	String.prototype.trim = String.prototype.trim || function () {
-		return this.replace( /^\s+/g, "" ).replace( /\s+$/g, "" );
-	};
+    // length of a string with regex removed
+    function count(regex, str) {
+        return str.length - str.replace(regex, "").length;
+    }
 
-	Array.prototype.forEach = Array.prototype.forEach || function ( callback, context ) {
+    // get the indentation level
+    function getIndentation(str) {
+        return count(/^\s*/, str);
+    }
 
-		var i = 0, len = this.length;
-		for ( ; i < len; i++ ) {
-			if ( this[i] !== undef ) {
-				// context is optional - func.call(null/undef) is the same as func()
-				callback.call( context, this[i], i, this );
-			}
-		}
+    // the constructor - takes a raw tree and the two callbacks
+    var Xpert = function (tree, displayQuestion, displayResult) {
 
-	};
+        this.displayQuestion = displayQuestion;
+        this.displayResult = displayResult;
 
-	Array.prototype.map = Array.prototype.map || function ( callback, context ) {
+        // parse the tree if it isn't already
+        if (typeof tree === "string") {
+            tree = Xpert.parseTree(tree);
+        }
 
-		var result = [];
-		this.forEach( function (curr, i, self) {
-			result[ i ] = callback.call( context, curr, i, self );
-		});
+        // display the first question
+        this.next(tree);
 
-		return result;
+    };
 
-	};
+    Xpert.prototype.next = function (next) {
 
-}() );
+        // use for storing the current state of the tree
+        this.tree = next;
 
-var Xpert = ( function () {
+        if (typeof next === "string") {
+            this.displayResult(next);
+        } else {
+            this.displayQuestion(next[0], next[1]);
+        }
 
-	"use strict";
+    };
 
-	// length of a string with regex removed
-	function count ( regex, str ) {
-		return str.length - str.replace( regex, "" ).length;
-	}
+    Xpert.parseTree = function (tree) {
 
-	// get the indentation level
-	function getIndentation ( str ) {
-		return count( /^\s*/, str );
-	}
+        // assume initial indent is 0, this
+        // strips out all whitespace before
+        // the first question
+        tree = tree.trim().split("\n"); // todo: whitespace
 
-	// the constructor - takes a raw tree and the two callbacks
-	var Xpert = function ( tree, displayQuestion, displayResult ) {
+        // where the real parsing happens
+        // the actual process probably needs more explaining
+        function parseTree(tree) {
 
-		this.displayQuestion = displayQuestion;
-		this.displayResult = displayResult;
+            var question = tree[0],
+                answers = [],
+                questionLevel = getIndentation(question),
+                indentAmount = getIndentation(tree[1]) - questionLevel;
 
-		// parse the tree if it isn't already
-		if ( typeof tree === "string" ) {
-			tree = Xpert.parseTree( tree );
-		}
+            // the first item will always be the question
+            // so get the second onwards
+            _.forEach(tree.slice(1), function (curr) {
 
-		// display the first question
-		this.next( tree );
+                var answerLevel = getIndentation(curr),
+                    last = answers.length - 1;
 
-	};
+                // the next line is further indented, more questions coming
+                if (answerLevel === questionLevel + indentAmount) {
+                    answers.push([curr]);
+                } else {
+                    answers[last].push(curr);
+                }
 
-	Xpert.prototype.next = function ( next ) {
+            });
 
-		// use for storing the current state of the tree
-		this.tree = next;
+            answers = answers.map(function (curr) {
 
-		if ( typeof next === "string" ) {
-			this.displayResult( next );
-		} else {
-			this.displayQuestion( next[0], next[1] );
-		}
+                // if more than one question-answer pair, more
+                // sub-questions have not been nested - recursion!
+                if (curr.length > 2) {
+                    return [curr[0], parseTree(curr.slice(1))];
+                } else {
+                    return curr;
+                }
 
-	};
+            });
 
-	Xpert.parseTree = function ( tree ) {
+            return [question, answers];
 
-		// assume initial indent is 0, this
-		// strips out all whitespace before
-		// the first question
-		tree = tree.trim().split( "\n" );
+        }
 
-		// where the real parsing happens
-		// the actual process probably needs more explaining
-		function parseTree ( tree ) {
+        // parse the tree
+        tree = parseTree(tree);
 
-			var question = tree[ 0 ],
-				answers = [],
-				questionLevel = getIndentation( question ),
-				indentAmount = getIndentation( tree[1] ) - questionLevel;
+        // clean tabs from the start of each question
+        return Xpert.mapTree(tree, function (response) {
+            return response.trim();
+        });
 
-			// the first item will always be the question
-			// so get the second onwards
-			tree.slice( 1 ).forEach( function (curr) {
+    };
 
-				var answerLevel = getIndentation( curr ),
-					last = answers.length - 1;
+    // returns array of each possible question in a tree
+    function getQuestions(tree) {
 
-				// the next line is further indented, more questions coming
-				if ( answerLevel === questionLevel + indentAmount ) {
-					answers.push( [curr] );
-				} else {
-					answers[ last ].push( curr );
-				}
+        // tree always starts with a question
+        var questions = [tree[0]];
 
-			});
+        tree[1].forEach(function (curr) {
+            var currNext = curr[1];
 
-			answers = answers.map( function (curr) {
+            // more questions - result not found
+            if (typeof currNext !== "string") {
+                questions = questions.concat(getQuestions(currNext));
+            }
+        });
 
-				// if more than one question-answer pair, more
-				// sub-questions have not been nested - recursion!
-				if ( curr.length > 2 ) {
-					return [ curr[0], parseTree(curr.slice(1)) ];
-				} else {
-					return curr;
-				}
+        return questions;
 
-			});
+    }
 
-			return [ question, answers ];
+    Xpert.getQuestions = function (tree) {
 
-		}
+        if (typeof tree === "string") {
+            tree = Xpert.parseTree(tree);
+        }
 
-		// parse the tree
-		tree = parseTree( tree );
+        return getQuestions(tree);
 
-		// clean tabs from the start of each question
-		return Xpert.mapTree( tree, function (response) {
-			return response.trim();
-		});
+    };
 
-	};
+    Xpert.prototype.getQuestions = function () {
+        return getQuestions(this.tree);
+    };
 
-	// returns array of each possible question in a tree
-	function getQuestions ( tree ) {
+    function getResults(tree) {
 
-		// tree always starts with a question
-		var questions = [ tree[0] ];
+        var results = [];
 
-		tree[ 1 ].forEach( function (curr) {
-			var currNext = curr[ 1 ];
+        // was the final answer - result found
+        if (typeof tree === "string") {
+            return [tree];
+        }
 
-			// more questions - result not found
-			if ( typeof currNext !== "string" ) {
-				questions = questions.concat( getQuestions(currNext) );
-			}
-		});
+        // more questions
+        tree[1].forEach(function (curr) {
+            var currNext = curr[1];
+            results = results.concat(getResults(currNext));
+        });
 
-		return questions;
+        return results;
 
-	}
+    }
 
-	Xpert.getQuestions = function ( tree ) {
+    // returns array of each possible result in a tree
+    Xpert.getResults = function (tree) {
 
-		if ( typeof tree === "string" ) {
-			tree = Xpert.parseTree( tree );
-		}
+        if (typeof tree === "string") {
+            tree = Xpert.parseTree(tree);
+        }
 
-		return getQuestions( tree );
+        return getResults(tree);
 
-	};
+    };
 
-	Xpert.prototype.getQuestions = function () {
-		return getQuestions( this.tree );
-	};
+    Xpert.prototype.getResults = function () {
+        return getResults(this.tree);
+    };
 
-	function getResults ( tree ) {
+    function mapTree(tree, func) {
 
-		var results = [];
+        if (typeof tree === "string") {
+            tree = Xpert.parseTree(tree);
+        }
 
-		// was the final answer - result found
-		if ( typeof tree === "string" ) {
-			return [ tree ];
-		}
+        return tree.map(function (curr) {
 
-		// more questions
-		tree[ 1 ].forEach( function (curr) {
-			var currNext = curr[ 1 ];
-			results = results.concat( getResults(currNext) );
-		});
+            // sets of question/answer/result are stored
+            // in arrays - apply the function to the
+            // actual string of each
+            if (typeof curr === "string") {
+                // function called with the response as
+                // the argument and returns changes to it
+                return func(curr);
+            } else {
+                return mapTree(curr, func);
+            }
 
-		return results;
+        });
 
-	}
+    }
 
-	// returns array of each possible result in a tree
-	Xpert.getResults = function ( tree ) {
+    // applies a function to each response (question/possible answers/eventual result)
+    // used internally for cleaning the indentation white-space
+    Xpert.mapTree = function (tree, func) {
 
-		if ( typeof tree === "string" ) {
-			tree = Xpert.parseTree( tree );
-		}
+        if (typeof tree === "string") {
+            tree = Xpert.parseTree(tree);
+        }
 
-		return getResults( tree );
+        return mapTree(tree, func);
 
-	};
+    };
 
-	Xpert.prototype.getResults = function () {
-		return getResults( this.tree );
-	};
+    Xpert.prototype.mapTree = function (func) {
+        return mapTree(this.tree, func);
+    };
 
-	function mapTree ( tree, func ) {
+    return Xpert;
 
-		if ( typeof tree === "string" ) {
-			tree = Xpert.parseTree( tree );
-		}
-
-		return tree.map( function (curr) {
-
-			// sets of question/answer/result are stored
-			// in arrays - apply the function to the
-			// actual string of each
-			if ( typeof curr === "string" ) {
-				// function called with the response as
-				// the argument and returns changes to it
-				return func( curr );
-			} else {
-				return mapTree( curr, func );
-			}
-
-		});
-
-	}
-
-	// applies a function to each response (question/possible answers/eventual result)
-	// used internally for cleaning the indentation white-space
-	Xpert.mapTree = function ( tree, func ) {
-
-		if ( typeof tree === "string" ) {
-			tree = Xpert.parseTree( tree );
-		}
-
-		return mapTree( tree, func );
-
-	};
-
-	Xpert.prototype.mapTree = function ( func ) {
-		return mapTree( this.tree, func );
-	};
-
-	return Xpert;
-
-}() );
+}());
