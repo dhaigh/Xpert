@@ -168,7 +168,9 @@
 
 	});
 
-	expert.get('results').forEach( function (result) {
+	console.log(expert.get('results'));
+
+	_.forEach(expert.get('results'), function (result) {
 		// trim off the wiki part
 		results.push( result.split("|")[0] );
 	});

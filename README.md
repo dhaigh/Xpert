@@ -3,7 +3,7 @@ Xpert
 
 Xpert is a little thing for making expert systems.
 
-`var someSexyExpert = new Xpert( tree, questionCallback, resultFoundCallback );`
+`var someSexyExpert = new Xpert(tree, questionCallback, resultFoundCallback);`
 
 Upon initialization, the question callback is immediately invoked.
 
@@ -76,28 +76,8 @@ Parsed:
 
 So if the first tree was passed to the constructor, the first call to the question callback would be something like:
 
-`questionCallback( "Question", [["Answer 1", "Result"],["Answer 2", "Another result"],["Answer 3", "Moar result!"]] )`
+`questionCallback("Question", [["Answer 1", "Result"],["Answer 2", "Another result"],["Answer 3", "Moar result!"]])`
 
 Then in your callback function, you take the question argument, display it, then take the answer tree, display each possible answer and keep track of the result of each answer.
 
 Either way, what you want to do is when an answer is selected, call the `.next()` method of your Xpert object, with the parameter being the result of that answer. Xpert will determine if more questions need to be asked or not, and runs the appropriate callback.
-
-Methods
--------
-
-`.next(tree)` - takes an Xpert object to a new state with a new tree and runs the appropriate callback
-
-`.getQuestions()` - returns an array of all the questions in the tree
-
-`.getResults()` - returns an array of all the results in the tree
-
-Helper functions
-----------------
-
-`Xpert.parseTree(tree)` - takes a raw tree as the only parameter and returns the tree parsed
-
-`Xpert.mapTree(tree, func)` - takes a parsed tree and maps to each response and returns the new tree
-
-`Xpert.getQuestions(tree)` - takes a parsed tree and returns an array of all the questions in the tree
-
-`Xpert.getResults(tree)` - takes a parsed tree and returns an array of all the results in the tree
