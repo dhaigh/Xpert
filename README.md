@@ -95,20 +95,15 @@ API
 
 `results` - any possible result following an answer - i.e. no more questions exist
 
-### Xpert#map
+### Xpert#map(callback)
 
 Returns a map of the tree.
 
-`expert.map(callback)`
+### Xpert#get(type = 'all')
 
-### Xpert#get
+Returns a list of the specified type in the tree.
 
-All of the following return flat arrays.
-
-`expert.get()`
-`expert.get(type)`
-
-### Xpert#each
+### Xpert#each(type = 'all', callback)
 
 Short-hand for `_.each(expert.get(), callback)`
 
