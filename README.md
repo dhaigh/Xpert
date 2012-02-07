@@ -85,7 +85,7 @@ Either way, what you want to do is when an answer is selected, call the `.next()
 API
 ---
 
-### Types:
+### Types
 
 `all` - the whole tree
 
@@ -95,16 +95,18 @@ API
 
 `results` - any possible result following an answer - i.e. no more questions exist
 
-### Xpert#map(callback)
+### Methods
+
+#### Xpert#map(callback)
 
 Returns a map of the tree.
 
-### Xpert#get(type = 'all')
+#### Xpert#get(type = 'all')
 
 Returns a list of the specified type in the tree.
 
-### Xpert#each(type = 'all', callback)
+#### Xpert#each(type = 'all', callback)
 
-Short-hand for `_.each(expert.get(), callback)`
+Short-hand for `_.each(Xpert#get(type = 'all'), callback)`
 
-Low-level methods for each exist too.
+### Static methods
