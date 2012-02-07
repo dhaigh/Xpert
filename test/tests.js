@@ -39,6 +39,22 @@ test( "Xpert", function () {
 	equal( expert1.displayResult, r1, "result callback registered" );
 });
 
+test( "Xpert.parseTree(tree)", function () {
+	expect( 5 );
+
+	var expected1 = ["testing 123",[["yes", "foo"],["no", "bar"]]],
+		expected2 = ["testing 123", [["yes", "foo"],["no", ["moar test?",[["ja", "boo"],["nay", "hoo"]]]]]],
+		expected3 = ["testing 123", [["yes", ["can has foo?", [["yes", ["sure?", [["yes", "fine, foo!"]]]]]]],["no", ["moar test?", [["ja", "boo"],["nay", "hoo"],["mm", "goo"]]]]]],
+		expected4 = ["whitespace test!!1", [["pick me!", "^_^"]]],
+		expected5 = ["x?",[["a)","aye"],["b)",["test..?",[["a)",["0.1+0.2?",[["0.3","correct!"],["0.30000000000000004","durp?"]]]],["b)","yay"]]]],["c)",["bla?",[["yes",["blaa?",[["yes","bla."],["no",["blaaaa?",[["yes","foo"],["sorta",["who?",[["dr",["PhD?",[["ya",["5x2?",[["12","c'mon children don't be shy"],["10","sounds good to me"],["5x2","fine"]]]]]]],["who","DR."]]]],["not rly","bar"],["no","nah"]]]]]]],["no","rawr"]]]],["d)","2"],["e)",["q?",[["a)","123"],["b)","123"]]]]]];
+
+	deepEqual( tree1parsed, expected1, "simple tree" );
+	deepEqual( tree2parsed, expected2, "one level of nesting" );
+	deepEqual( tree3parsed, expected3, "varying indents" );
+	deepEqual( tree4parsed, expected4, "spaces instead of tabs" );
+	deepEqual( tree5parsed, expected5, "14 levels of nesting" );
+});
+
 test( "Xpert#next()", function () {
 	expect( 4 );
 
@@ -58,6 +74,8 @@ test( "Xpert#next()", function () {
 	expert2.next( tree2parsed );
 
 });
+
+module('methodz');
 
 test( "Xpert#map(callback)", function () {
 	expect( 2 );
@@ -81,8 +99,9 @@ test( "TODO: Xpert#map('results', callback)", function () {
 
 });
 
-test( "TODO: Xpert#get('questions')", function () {
+test( "Xpert#get()", function () {
 
+	deepEqual( expert1.get(), ['testing 123', 'yes', 'foo', 'no', 'bar']);
 });
 
 test( "Xpert#get('questions')", function () {
@@ -95,8 +114,13 @@ test( "Xpert#get('questions')", function () {
 	deepEqual( expert5.get('questions'), ["x?","test..?","0.1+0.2?","bla?","blaa?","blaaaa?","who?","PhD?","5x2?","q?"] );
 });
 
-test( "TODO: Xpert#get('answers')", function () {
+test( "Xpert#get('answers')", function () {
 
+	deepEqual( expert1.get('answers'), ['yes', 'no'] );
+	deepEqual( expert2.get('answers'), ['yes', 'no', 'ja', 'nay'] );
+	//deepEqual( expert3.get('answers'), ['yes', 'no'] );
+	//deepEqual( expert4.get('answers'), ['yes', 'no'] );
+	//deepEqual( expert5.get('answers'), ['yes', 'no'] );
 });
 
 test( "Xpert#get('results')", function () {
@@ -111,6 +135,13 @@ test( "Xpert#get('results')", function () {
 
 test( "TODO: Xpert#each(callback)", function () {
 
+	var items1 = [];
+
+	expert1.each(function (answer) {
+		items1.push(answer);
+	});
+
+	deepEqual( items1, expert1.get() );
 });
 
 test( "Xpert#each('questions', callback)", function () {
@@ -209,23 +240,9 @@ test( "Xpert#each('results', callback)", function () {
 	deepEqual( results5, expert5.get('results') );
 });
 
-test( "Xpert.parseTree(tree)", function () {
-	expect( 5 );
+module('static methods');
 
-	var expected1 = ["testing 123",[["yes", "foo"],["no", "bar"]]],
-		expected2 = ["testing 123", [["yes", "foo"],["no", ["moar test?",[["ja", "boo"],["nay", "hoo"]]]]]],
-		expected3 = ["testing 123", [["yes", ["can has foo?", [["yes", ["sure?", [["yes", "fine, foo!"]]]]]]],["no", ["moar test?", [["ja", "boo"],["nay", "hoo"],["mm", "goo"]]]]]],
-		expected4 = ["whitespace test!!1", [["pick me!", "^_^"]]],
-		expected5 = ["x?",[["a)","aye"],["b)",["test..?",[["a)",["0.1+0.2?",[["0.3","correct!"],["0.30000000000000004","durp?"]]]],["b)","yay"]]]],["c)",["bla?",[["yes",["blaa?",[["yes","bla."],["no",["blaaaa?",[["yes","foo"],["sorta",["who?",[["dr",["PhD?",[["ya",["5x2?",[["12","c'mon children don't be shy"],["10","sounds good to me"],["5x2","fine"]]]]]]],["who","DR."]]]],["not rly","bar"],["no","nah"]]]]]]],["no","rawr"]]]],["d)","2"],["e)",["q?",[["a)","123"],["b)","123"]]]]]];
-
-	deepEqual( tree1parsed, expected1, "simple tree" );
-	deepEqual( tree2parsed, expected2, "one level of nesting" );
-	deepEqual( tree3parsed, expected3, "varying indents" );
-	deepEqual( tree4parsed, expected4, "spaces instead of tabs" );
-	deepEqual( tree5parsed, expected5, "14 levels of nesting" );
-});
-
-test( "Xpert.map(tree)", function () {
+test( "Xpert.map(tree, callback)", function () {
 	expect( 3 );
 
 	deepEqual( Xpert.map(expert1.tree, function (response) {
@@ -239,6 +256,26 @@ test( "Xpert.map(tree)", function () {
 	deepEqual( expert1.tree, ["testing 123",[["yes","foo"],["no","bar"]]], "tree not modified" );
 });
 
+test( "TODO: Xpert.map('questions', tree, callback)", function () {
+
+});
+
+test( "TODO: Xpert.map('answers', tree, callback)", function () {
+
+});
+
+test( "TODO: Xpert.map('results', tree, callback)", function () {
+
+});
+
+test( "Xpert.get(tree)", function () {
+
+	deepEqual( Xpert.get(expert1.tree), ['testing 123', 'yes', 'foo', 'no', 'bar']);
+	// todo: 2,3,4,5, parsing
+
+
+});
+
 test( "Xpert.get('questions', tree)", function () {
 	expect( 6 );
 
@@ -250,8 +287,12 @@ test( "Xpert.get('questions', tree)", function () {
 	deepEqual( Xpert.get('questions', expert5.tree), ["x?","test..?","0.1+0.2?","bla?","blaa?","blaaaa?","who?","PhD?","5x2?","q?"] );
 });
 
-test( "TODO: Xpert.get('answers', tree)", function () {
+test( "Xpert.get('answers', tree)", function () {
 
+	deepEqual( Xpert.get('answers', expert1.tree), ['yes', 'no'] );
+	deepEqual( Xpert.get('answers', expert2.tree), ['yes', 'no', 'ja', 'nay'] );
+
+	//todo: moar
 });
 
 test( "Xpert.get('results', tree)", function () {
@@ -265,8 +306,107 @@ test( "Xpert.get('results', tree)", function () {
 	deepEqual( Xpert.get('results', expert5.tree), ["aye","correct!","durp?","yay","bla.","foo","c'mon children don't be shy","sounds good to me","fine","DR.","bar","nah","rawr","2","123","123"] );
 });
 
+test( "Xpert.each('questions', tree, callback)", function () {
+	expect( 5 );
+
+	var questions1 = [],
+		questions2 = [],
+		questions3 = [],
+		questions4 = [],
+		questions5 = [];
+
+	Xpert.each('questions', expert1.tree, function (result) {
+		questions1.push(result);
+	});
+	Xpert.each('questions', expert2.tree, function (result) {
+		questions2.push(result);
+	});
+	Xpert.each('questions', expert3.tree, function (result) {
+		questions3.push(result);
+	});
+	Xpert.each('questions', expert4.tree, function (result) {
+		questions4.push(result);
+	});
+	Xpert.each('questions', expert5.tree, function (result) {
+		questions5.push(result);
+	});
+
+	deepEqual( questions1, expert1.get('questions') );
+	deepEqual( questions2, expert2.get('questions') );
+	deepEqual( questions3, expert3.get('questions') );
+	deepEqual( questions4, expert4.get('questions') );
+	deepEqual( questions5, expert5.get('questions') );
+});
+
+test( "Xpert.each('answers', tree, callback)", function () {
+	expect( 5 );
+
+	var answers1 = [],
+		answers2 = [],
+		answers3 = [],
+		answers4 = [],
+		answers5 = [];
+
+	Xpert.each('answers', expert1.tree, function (result) {
+		answers1.push(result);
+	});
+	Xpert.each('answers', expert2.tree, function (result) {
+		answers2.push(result);
+	});
+	Xpert.each('answers', expert3.tree, function (result) {
+		answers3.push(result);
+	});
+	Xpert.each('answers', expert4.tree, function (result) {
+		answers4.push(result);
+	});
+	Xpert.each('answers', expert5.tree, function (result) {
+		answers5.push(result);
+	});
+
+	deepEqual( answers1, expert1.get('answers') );
+	deepEqual( answers2, expert2.get('answers') );
+	deepEqual( answers3, expert3.get('answers') );
+	deepEqual( answers4, expert4.get('answers') );
+	deepEqual( answers5, expert5.get('answers') );
+});
+
+test( "Xpert.each('results', tree, callback)", function () {
+	expect( 5 );
+
+	var results1 = [],
+		results2 = [],
+		results3 = [],
+		results4 = [],
+		results5 = [];
+
+	Xpert.each('results', expert1.tree, function (result) {
+		results1.push(result);
+	});
+	Xpert.each('results', expert2.tree, function (result) {
+		results2.push(result);
+	});
+	Xpert.each('results', expert3.tree, function (result) {
+		results3.push(result);
+	});
+	Xpert.each('results', expert4.tree, function (result) {
+		results4.push(result);
+	});
+	Xpert.each('results', expert5.tree, function (result) {
+		results5.push(result);
+	});
+
+	deepEqual( results1, expert1.get('results') );
+	deepEqual( results2, expert2.get('results') );
+	deepEqual( results3, expert3.get('results') );
+	deepEqual( results4, expert4.get('results') );
+	deepEqual( results5, expert5.get('results') );
+});
 
 
+
+
+
+// todo: static utils parse trees
 
 
 

@@ -168,7 +168,7 @@
 
 	});
 
-	console.log(expert.get('results'));
+	console.log(expert.tree);
 
 	_.forEach(expert.get('results'), function (result) {
 		// trim off the wiki part

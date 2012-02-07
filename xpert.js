@@ -1,4 +1,4 @@
-var Xpert = (function () {
+;var Xpert = (function () {
 
 
     'use strict';
@@ -27,13 +27,11 @@ var Xpert = (function () {
 
     // strim trimmer
     function trim(str) {
-
         if (String.prototype.trim) {
             return str.trim();
         }
 
         return str.replace(/^\s+/).replace(/\s+$/);
-
     }
 
 
@@ -54,7 +52,7 @@ var Xpert = (function () {
 
         // where the real parsing happens
         // the actual process probably needs more explaining
-        var parse = function parse(tree) {
+        function parse(tree) {
 
             var question = tree[0],
                 answers = [],
@@ -91,7 +89,7 @@ var Xpert = (function () {
 
             return [question, answers];
 
-        };
+        }
 
         // parse the tree
         tree = parse(tree);
@@ -108,13 +106,11 @@ var Xpert = (function () {
 
     // parse a tree if it isn't already
     function fix(tree) {
-
         if (typeof tree === 'string') {
             tree = parseTree(tree);
         }
 
         return tree;
-
     }
 
 
@@ -172,26 +168,20 @@ var Xpert = (function () {
     // used internally for cleaning the indentation white-space
     function mapAll(tree, callback) {
 
-        tree = fix(tree);
+        return _.map(tree, function (curr) {
 
-        function map(tree, callback) {
-            return _.map(tree, function (curr) {
+            // sets of question/answer/result are stored
+            // in arrays - apply the function to the
+            // actual string of each
+            if (typeof curr === 'string') {
+                // function called with the response as
+                // the argument and returns changes to it
+                return callback(curr);
+            } else {
+                return mapAll(curr, callback);
+            }
 
-                // sets of question/answer/result are stored
-                // in arrays - apply the function to the
-                // actual string of each
-                if (typeof curr === 'string') {
-                    // function called with the response as
-                    // the argument and returns changes to it
-                    return callback(curr);
-                } else {
-                    return map(curr, callback);
-                }
-
-            });
-        }
-
-        return map(tree, callback);
+        });
 
     }
 
@@ -213,8 +203,14 @@ var Xpert = (function () {
             callback = tree;
             tree = type;
 
+            tree = fix(tree);
+
             return mapAll(tree, callback);
         }
+
+        tree = fix(tree);
+
+
     };
 
     Xpert.prototype.map = function (type, callback) {
@@ -235,69 +231,75 @@ var Xpert = (function () {
     // .get
     //////////////////////////////////////////////////////////////
 
-    // getAll?
+    function getAll(tree) {
+
+        var items = [tree[0]]; // first question
+
+        _.each(tree[1], function (item) {
+            items.push(item[0]); // answer
+
+            if (typeof item[1] === 'string') {
+                items.push(item[1]);                
+            } else {
+                items = items.concat(getAll(item[1])); // subtree
+            }
+
+        });
+
+        return items;
+
+    }
 
     function getQuestions(tree) {
 
-        tree = fix(tree);
+        // tree always starts with a question
+        var questions = [tree[0]];
 
-        // returns array of each possible question in a tree
-        function get(tree) {
+        _.forEach(tree[1], function (curr) {
+            var currNext = curr[1];
 
-            // tree always starts with a question
-            var questions = [tree[0]];
+            // more questions - result not found
+            if (typeof currNext !== 'string') {
+                questions = questions.concat(getQuestions(currNext));
+            }
+        });
 
-            _.forEach(tree[1], function (curr) {
-                var currNext = curr[1];
-
-                // more questions - result not found
-                if (typeof currNext !== 'string') {
-                    questions = questions.concat(get(currNext));
-                }
-            });
-
-            return questions;
-
-        }
-
-        return get(tree);
+        return questions;
 
     }
 
     function getAnswers(tree) {
 
-        tree = fix(tree);
+        var answers = [];
 
-        // get answers
+        _.each(tree[1], function (curr) {
+            answers.push(curr[0]);
 
-        return tree;
+            if (typeof curr[1] !== 'string') {
+                answers = answers.concat(getAnswers(curr[1]));
+            }
+        });
+
+        return answers;
 
     }
 
     function getResults(tree) {
 
-        tree = fix(tree);
+        var results = [];
 
-        function get(tree) {
-
-            var results = [];
-
-            // was the final answer - result found
-            if (typeof tree === 'string') {
-                return [tree];
-            }
-
-            // more questions
-            _.forEach(tree[1], function (curr) {
-                var currNext = curr[1];
-                results = results.concat(get(currNext));
-            });
-
-            return results;
-
+        // was the final answer - result found
+        if (typeof tree === 'string') {
+            return [tree];
         }
 
-        return get(tree);
+        // more questions
+        _.forEach(tree[1], function (curr) {
+            var currNext = curr[1];
+            results = results.concat(getResults(currNext));
+        });
+
+        return results;
 
     }
 
@@ -308,10 +310,23 @@ var Xpert = (function () {
     };
 
     Xpert.get = function (type, tree) {
+        if (arguments.length === 1) {
+            tree = type;
+
+            tree = fix(tree);
+            return getAll(tree);
+        }
+
+        tree = fix(tree);
+
         return getFunctions[type](tree);
     };
 
     Xpert.prototype.get = function (type) {
+        if (arguments.length === 0) {
+            return getAll(this.tree);
+        }
+
         return getFunctions[type](this.tree);
     };
 
@@ -320,18 +335,34 @@ var Xpert = (function () {
     // .each
     //////////////////////////////////////////////////////////////
 
-    // eachAll?
-
     function each(type, tree, callback) {
-        _.forEach(getFunctions[type](tree), function (curr) {
+        var items;
+
+        if (arguments.length === 2) {
+            items = getAll(tree);
+        } else {
+            items = getFunctions[type](tree);
+        }
+
+        _.forEach(items, function (curr) {
             callback(curr);
         });
     }
 
+    Xpert.each = function (type, tree, callback) {
+        tree = fix(tree);
 
-    Xpert.each = each;
+        each(type, tree, callback);
+    };
 
     Xpert.prototype.each = function (type, callback) {
+        if (arguments.length === 1) {
+            callback = type;
+            each(this.tree, callback);
+
+            return;
+        }
+
         each(type, this.tree, callback);
     };
 
