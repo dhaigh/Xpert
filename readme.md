@@ -3,7 +3,7 @@ Xpert
 
 Xpert is a little thing for making expert systems.
 
-`var someSexyExpert = new Xpert(tree, questionCallback, resultFoundCallback);`
+`var expert = new Xpert(tree, questionCallback, resultFoundCallback);`
 
 Upon initialization, the question callback is immediately invoked.
 
@@ -110,6 +110,10 @@ Returns a list of the specified type in the tree.
 Short-hand for `_.each(Xpert#get(type = 'all'), callback)`
 
 ### Static methods
+
+#### Xpert.parseTree(tree)
+
+Takes a raw tree (string) and returns a parsed one ((nested) array).
 
 #### Xpert.map(tree, callback)
 

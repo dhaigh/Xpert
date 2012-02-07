@@ -2,16 +2,9 @@ var Xpert = (function () {
 
     'use strict';
 
-    var Xpert,
-
-        methods = {
-            'map': null,
-            'each': null,
-            'get': null
-        };
+    var Xpert, methods = {'map': null, 'get': null};
 
 
-    // string trimmer
     function trim(str) {
         if (String.prototype.trim) {
             return str.trim();
@@ -19,6 +12,8 @@ var Xpert = (function () {
 
         return str.replace(/^\s+/).replace(/\s+$/);
     }
+
+
 
 
     //////////////////////////////////////////////////////////////
@@ -109,6 +104,7 @@ var Xpert = (function () {
 
 
 
+
     //////////////////////////////////////////////////////////////
     // Xpert
     //////////////////////////////////////////////////////////////
@@ -139,6 +135,7 @@ var Xpert = (function () {
 
 
     Xpert.parseTree = parseTree;
+
 
 
 
@@ -191,6 +188,8 @@ var Xpert = (function () {
     };
 
 
+
+
     //////////////////////////////////////////////////////////////
     // .get
     //////////////////////////////////////////////////////////////
@@ -210,7 +209,6 @@ var Xpert = (function () {
                 } else {
                     items = items.concat(getAll(currNext)); // recursion!
                 }
-
             });
 
             return items;
@@ -288,16 +286,15 @@ var Xpert = (function () {
     };
 
 
+
+
     //////////////////////////////////////////////////////////////
     // .each
     //////////////////////////////////////////////////////////////
 
     function each(type, tree, callback) {
-        _.each(methods.get[type](tree), function (curr) {
-            callback(curr);
-        });
+        _.each(methods.get[type](tree), callback);
     }
-
 
     Xpert.each = function (type, tree, callback) {
         if (arguments.length === 2) {
@@ -319,6 +316,9 @@ var Xpert = (function () {
 
         each(type, this.tree, callback);
     };
+
+
+
 
     return Xpert;
 
