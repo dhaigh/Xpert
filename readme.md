@@ -113,7 +113,7 @@ Short-hand for `_.each(Xpert#get(type = 'all'), callback)`
 
 #### Xpert.parseTree(tree)
 
-Takes a raw tree (string) and returns a parsed one ((nested) array).
+Takes a raw tree (string) and returns a parsed one (nested array).
 
 #### Xpert.map(tree, callback)
 
