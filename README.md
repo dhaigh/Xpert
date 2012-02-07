@@ -87,13 +87,13 @@ API
 
 ### Types:
 
-'all' = the whole tree
+`all` - the whole tree
 
-'questions' = any question
+`questions` - any question
 
-'answers' = any possible answer to any question
+`answers` - any possible answer to any question
 
-'results' = any possible result following an answer - i.e. no more questions exist
+`results` - any possible result following an answer - i.e. no more questions exist
 
 ### Xpert#map
 
