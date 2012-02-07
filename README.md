@@ -81,3 +81,34 @@ So if the first tree was passed to the constructor, the first call to the questi
 Then in your callback function, you take the question argument, display it, then take the answer tree, display each possible answer and keep track of the result of each answer.
 
 Either way, what you want to do is when an answer is selected, call the `.next()` method of your Xpert object, with the parameter being the result of that answer. Xpert will determine if more questions need to be asked or not, and runs the appropriate callback.
+
+API
+---
+
+Types:
+
+'all' = the whole tree
+'questions' = any question
+'answers' = any possible answer to any question
+'results' = any possible result following an answer - i.e. no more questions exist
+
+### Xpert#map
+
+Returns a map of the tree.
+
+`expert.map(callback)`
+
+### Xpert#get
+
+All of the following return flat arrays.
+
+`expert.get()`
+`expert.get(type)`
+
+### Xpert#each
+
+Short-hand for `_.each(expert.get(), callback)`
+
+`expert.each(callback)`
+`expert.each(type, callback)
+Low-level methods for each exist too.

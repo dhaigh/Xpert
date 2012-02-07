@@ -1,8 +1,6 @@
 var Xpert = (function () {
 
-
     'use strict';
-
 
     var Xpert,
 
@@ -26,7 +24,6 @@ var Xpert = (function () {
     //////////////////////////////////////////////////////////////
     // Parser
     //////////////////////////////////////////////////////////////
-
 
     function parseTree(tree) {
 
@@ -119,7 +116,6 @@ var Xpert = (function () {
 
     // the constructor - takes a raw tree and the two callbacks
     Xpert = function (tree, displayQuestion, displayResult) {
-
         this.displayQuestion = displayQuestion;
         this.displayResult = displayResult;
 
@@ -127,12 +123,10 @@ var Xpert = (function () {
 
         // display the first question
         this.next(tree);
-
     };
 
 
     Xpert.prototype.next = function (next) {
-
         // current state of the tree
         this.tree = next;
 
@@ -141,7 +135,6 @@ var Xpert = (function () {
         } else {
             this.displayQuestion(next[0], next[1]);
         }
-
     };
 
 
