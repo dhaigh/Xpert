@@ -110,3 +110,9 @@ Returns a list of the specified type in the tree.
 Short-hand for `_.each(Xpert#get(type = 'all'), callback)`
 
 ### Static methods
+
+#### Xpert.map(tree, callback)
+
+#### Xpert.get(type = 'all', tree)
+
+#### Xpert.each(type = 'all', tree, callback)
