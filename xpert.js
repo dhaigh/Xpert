@@ -6,8 +6,6 @@ var Xpert = (function () {
 
     var Xpert,
 
-        mapFunctions,
-
         methods = {
             'map': null,
             'each': null,
