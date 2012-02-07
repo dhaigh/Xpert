@@ -75,8 +75,6 @@ test( "Xpert#next()", function () {
 
 });
 
-module('methodz');
-
 test( "Xpert#map(callback)", function () {
 	expect( 2 );
 
@@ -240,7 +238,8 @@ test( "Xpert#each('results', callback)", function () {
 	deepEqual( results5, expert5.get('results') );
 });
 
-module('static methods');
+test( '', function () {});
+test( '', function () {});
 
 test( "Xpert.map(tree, callback)", function () {
 	expect( 3 );
@@ -304,6 +303,38 @@ test( "Xpert.get('results', tree)", function () {
 	deepEqual( Xpert.get('results', expert3.tree), ["fine, foo!","boo","hoo","goo"] );
 	deepEqual( Xpert.get('results', expert4.tree), ["^_^"] );
 	deepEqual( Xpert.get('results', expert5.tree), ["aye","correct!","durp?","yay","bla.","foo","c'mon children don't be shy","sounds good to me","fine","DR.","bar","nah","rawr","2","123","123"] );
+});
+
+test( "Xpert.each(tree, callback)", function () {
+	expect( 5 );
+
+	var questions1 = [],
+		questions2 = [],
+		questions3 = [],
+		questions4 = [],
+		questions5 = [];
+
+	Xpert.each(expert1.tree, function (result) {
+		questions1.push(result);
+	});
+	Xpert.each(expert2.tree, function (result) {
+		questions2.push(result);
+	});
+	Xpert.each(expert3.tree, function (result) {
+		questions3.push(result);
+	});
+	Xpert.each(expert4.tree, function (result) {
+		questions4.push(result);
+	});
+	Xpert.each(expert5.tree, function (result) {
+		questions5.push(result);
+	});
+
+	deepEqual( questions1, expert1.get() );
+	deepEqual( questions2, expert2.get() );
+	deepEqual( questions3, expert3.get() );
+	deepEqual( questions4, expert4.get() );
+	deepEqual( questions5, expert5.get() );
 });
 
 test( "Xpert.each('questions', tree, callback)", function () {
