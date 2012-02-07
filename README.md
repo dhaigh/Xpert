@@ -107,6 +107,4 @@ Returns a list of the specified type in the tree.
 
 Short-hand for `_.each(expert.get(), callback)`
 
-`expert.each(callback)`
-`expert.each(type, callback)`
 Low-level methods for each exist too.
