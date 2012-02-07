@@ -85,11 +85,14 @@ Either way, what you want to do is when an answer is selected, call the `.next()
 API
 ---
 
-Types:
+### Types:
 
 'all' = the whole tree
+
 'questions' = any question
+
 'answers' = any possible answer to any question
+
 'results' = any possible result following an answer - i.e. no more questions exist
 
 ### Xpert#map
@@ -110,5 +113,5 @@ All of the following return flat arrays.
 Short-hand for `_.each(expert.get(), callback)`
 
 `expert.each(callback)`
-`expert.each(type, callback)
+`expert.each(type, callback)`
 Low-level methods for each exist too.
